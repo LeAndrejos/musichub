@@ -1,0 +1,70 @@
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h1 class="modal-title" id="modal-basic-title">Schedule a meeting</h1>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form>
+      <div class="form-group">
+        <label for="title">Title</label>
+        <div class="input-group">
+          <input id="title" name="title" [(ngModel)]="title" class="form-control"
+                 [ngClass]="{ 'is-invalid': this.isInvalid(t) }" #t="ngModel" required maxlength="20">
+          <div *ngIf="this.isInvalid(t)" class="invalid-feedback">
+            <div *ngIf="t.errors['required']">
+              You must provide a title.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="startTime">Date</label>
+        <div class="input-group">
+          <input type="date" id="startTime" name="startTime" [(ngModel)]="startTime" #d="ngModel"
+                 [ngClass]="{ 'is-invalid': this.isInvalid(d) }"
+                 class="form-control" required>
+          <div *ngIf="this.isInvalid(d)" class="invalid-feedback">
+            <div *ngIf="d.errors['required']">
+              You must select a date.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="startHour">Time</label>
+        <div>
+          <input readonly name="startHour" mdbInput mdbValidate id="startHour" [ngxTimepicker]="picker" [format]="24"
+                 required [(ngModel)]="time" #st="ngModel"
+                 [pattern]="'[0-2][0-9]:[0-5][0-9]'">
+          <ngx-material-timepicker (timeSet)="setTime($event)" [theme]="timepickerTheme"
+                                   #picker></ngx-material-timepicker>
+          <div class="invalid-list-error" *ngIf="this.isSubmitted && !this.isTimeSelected">You must select a time.</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="student">Student</label>
+        <mat-selection-list (selectionChange)="onSelectionChange(s.selectedOptions.selected[0])" [multiple]="false" #s>
+          <mat-list-option *ngFor="let user of this.users" [value]="user">
+            {{user.username}}
+          </mat-list-option>
+          <mat-list-item *ngIf="this.users.length===0">
+            <span style="color: grey">No users available.</span>
+          </mat-list-item>
+        </mat-selection-list>
+        <div *ngIf="this.isSubmitted && !this.isUserSelected" class="invalid-list-error">
+          <div>
+            You must choose a user.
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="close()">Add</button>
+  </div>
+</ng-template>
+
+<button type="button" mat-raised-button color="button-color" class="course-button" (click)="open(content)">Add meeting
+</button>

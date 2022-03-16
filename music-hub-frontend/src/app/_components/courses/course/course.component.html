@@ -1,0 +1,91 @@
+<div style="text-align: center">
+  <div style="display: inline-block;">
+    <h1 style="margin: 20px; font-size: 3em">{{course.title}}</h1>
+  </div>
+  <div style="display: inline-block;">
+    <button mat-icon-button *ngIf=isOwner() (click)="goToEditPage()">
+      <mat-icon>edit</mat-icon>
+    </button>
+  </div>
+</div>
+<hr style="margin-left: 10%; margin-right: 10%"/>
+<div style="text-align:center">
+  <button mat-raised-button color="button-color" class="toggle-recording-button" (click)="toggleRecording()">Show
+    recording panel
+  </button>
+</div>
+<div style="text-align:center; margin-top: 20px" [hidden]="hideRecording">
+  <video class="video" #video autoplay [muted]="'muted'"></video>
+  <span class="m-1"></span>
+  <br>
+  <button type="button" mat-raised-button color="button-color" class="course-button" *ngIf="!isRecording"
+          (click)="startRecording()">Start recording
+  </button>
+  <button class="btn btn-warning btn-lg" *ngIf="isRecording" (click)="stopRecording()">Stop recording</button>
+  <br/>
+  <br/>
+  <div class="btn-container">
+    <app-send-recording-modal *ngIf="!isRecording && this.hasRecorded" (sendRecording)="sendRecord($event)"
+                              [courseId]="this.course.courseId"></app-send-recording-modal>
+  </div>
+</div>
+
+<hr style="margin-left: 10%; margin-right: 10%"/>
+
+<app-section-list [sections]="this.sections" [course]="this.course"></app-section-list>
+
+<hr style="margin-left: 10%; margin-right: 10%"/>
+
+<h1 style="margin-left: 10%; font-size: 2.5em">Meetings</h1>
+<div class="meeting-list">
+  <div class="meeting" *ngFor="let meeting of this.meetings">
+    <button matTooltip="Go to meeting room" type="button" mat-icon-button color="button-color"
+            class="course-button meeting-button"
+            (click)="goToMeeting(meeting)">
+      <mat-icon>meeting_room</mat-icon>
+    </button>
+    <span style="font-size: 1em">{{meeting.title}}</span>
+    <mat-icon>calendar_today</mat-icon>
+    {{this.formatDate(meeting.startTime)}}
+    <mat-icon>access_time</mat-icon>
+    {{this.formatTime(meeting.startTime)}}
+    <mat-icon>person_pin</mat-icon>
+    {{this.formatMeetingUser(meeting)}}
+  </div>
+
+  <div class="btn-container">
+    <app-add-meeting-modal *ngIf="isOwner()" (meetingCreate)="this.addMeeting($event)"
+                           [courseId]="this.course.courseId"></app-add-meeting-modal>
+  </div>
+</div>
+
+<hr style="margin-left: 10%; margin-right: 10%"/>
+
+<h1 style="margin-left: 10%; font-size: 2.5em" *ngIf="isOwner()">Participants</h1>
+<div *ngIf="isOwner()" class="participants-list">
+  <div style="width: 90%; float: left">
+    <mat-list class="participant">
+      <mat-list-item *ngFor="let participant of this.users">
+        <div class="participant-name">
+          {{participant.username}}
+        </div>
+        <div class="participant-delete">
+          <button mat-icon-button (click)="deleteUserFromCourse(participant)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </mat-list-item>
+      <mat-list-item *ngIf="this.users.length===0">
+        <div class="attachment-name">
+          <span style="color: grey">No users here.</span>
+        </div>
+      </mat-list-item>
+    </mat-list>
+  </div>
+
+  <div class="btn-container">
+    <app-add-user-modal (addUser)="this.addUserToCourse($event)" [courseId]="this.course.courseId"></app-add-user-modal>
+  </div>
+</div>
+
+<app-chat [courseId]="this.courseId"></app-chat>

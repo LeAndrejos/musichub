@@ -1,0 +1,17 @@
+<nav class="navbar navbar-expand navbar-dark bg-dark" *ngIf="user">
+  <div class="navbar-nav">
+    <a class="nav-item nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
+    <a class="nav-item nav-link" routerLink="courses" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Courses</a>
+    <a class="nav-item nav-link" (click)="logout()">Logout</a>
+  </div>
+  <div class="account-btn-container">
+    <div>
+      <span style="color: white">{{this.user.username}}</span>
+    </div>
+    <button mat-icon-button color="account-button-color" (click)="goToAccount()">
+      <mat-icon>account_box</mat-icon>
+    </button>
+  </div>
+</nav>
+
+

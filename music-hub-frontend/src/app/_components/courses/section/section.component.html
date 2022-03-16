@@ -1,0 +1,69 @@
+<div class="section">
+  <h1>{{section.section_name}}</h1>
+  <p>{{section.description}}</p>
+
+  <div style="overflow: hidden">
+    <div>
+      <h1 style="margin: 20px;">Attachments</h1>
+      <div style="width: 90%; float: left">
+        <mat-list class="attachment">
+          <mat-list-item *ngFor="let attachment of this.attachments">
+            <div class="attachment-name">
+              <button color="button-download-color" mat-button (click)="getAttachment(attachment)">{{attachment.content}}</button>
+            </div>
+            <div class="participant-delete" *ngIf="isOwner()">
+              <button mat-icon-button (click)="deleteAttachment(attachment)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </mat-list-item>
+          <mat-list-item *ngIf="this.attachments.length===0">
+            <div class="attachment-name">
+              <span style="color: grey">No attachments here.</span>
+            </div>
+          </mat-list-item>
+        </mat-list>
+      </div>
+
+      <div style="width: 10%; float: right; text-align: center; vertical-align: middle; height: 100%" *ngIf="isOwner()">
+        <input class="file-input" type="file" (change)="onFileSelected($event)" #avatarUpload>
+        <button mat-icon-button class="attachment-add" (click)="avatarUpload.click()">
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <div>
+      <div style="width: 90%; float: left">
+        <h1 style="margin: 20px;">{{this.isOwner() ? 'Participants\' attachments' : 'Your attachments'}}</h1>
+        <mat-list class="attachment">
+          <mat-list-item *ngFor="let attachment of this.userAttachments">
+            <div class="attachment-name">
+              <button color="button-download-color" mat-button (click)="getAttachment(attachment)">{{attachment.content}}</button>
+              <span *ngIf="isOwner()"> --- {{attachment.user.username}}</span>
+            </div>
+            <div class="participant-delete" *ngIf="!isOwner()">
+              <button mat-icon-button (click)="deleteAttachment(attachment)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </mat-list-item>
+          <mat-list-item *ngIf="this.userAttachments.length===0">
+            <div class="attachment-name">
+              <span style="color: grey">No attachments here.</span>
+            </div>
+          </mat-list-item>
+        </mat-list>
+      </div>
+
+      <div style="width: 10%; float: right; text-align: center; vertical-align: middle; height: 100%"
+           *ngIf="!isOwner()">
+        <input class="file-input" type="file" (change)="onFileSelected($event)" #avatarUpload>
+        <button mat-icon-button class="attachment-add" (click)="avatarUpload.click()">
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>

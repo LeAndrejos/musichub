@@ -1,0 +1,61 @@
+version: '3.1'
+
+services: 
+  minio:
+    image: minio/minio:latest
+    volumes:
+      - ./minio-data:/data
+    networks:
+      - main-network
+    environment:
+      MINIO_ACCESS_KEY: msi-minio
+      MINIO_SECRET_KEY: msi-minio
+    command: server /data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http:localhost:9000"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+  
+  postgres:
+    networks:
+      - main-network
+    image: postgres:12
+    environment:
+      POSTGRES_USER: musichubpsql
+      POSTGRES_PASSWORD: musichubpsql
+    volumes:
+      - ./postgres-init:/docker-entrypoint-initdb.d/
+      
+  backend:
+    networks:
+      - main-network
+    image: andrejos/music-hub-backend:latest
+    restart: on-failure
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/musichubpsql
+      MINIO_URL: http://minio:9000
+    depends_on:
+      - "postgres"
+      - "minio"
+  
+  frontend:
+    networks:
+      - main-network
+    image: andrejos/music-hub-frontend:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./certs:/etc/nginx/certs/
+    environment:
+      PRODUCTION: "false"
+      API_URL: 'https://localhost:443/api'
+      CALL_URL: 'wss://localhost:443/api/socket'
+      CHAT_URL: 'wss://localhost:443/api/chat'
+    depends_on:
+      - "postgres"
+      - "minio"
+
+networks:
+  main-network:

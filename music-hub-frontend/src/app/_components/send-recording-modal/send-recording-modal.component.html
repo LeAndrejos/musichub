@@ -1,0 +1,47 @@
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h1 class="modal-title" id="modal-basic-title">Send your recording</h1>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form>
+      <div class="form-group">
+        <label for="title">Name of the recording</label>
+        <div class="input-group">
+          <input id="title" name="title" [(ngModel)]="title" class="form-control" #t="ngModel" required
+                 [ngClass]="{ 'is-invalid': t.invalid && (t.dirty || t.touched) }">
+          <div *ngIf="t.invalid && (t.dirty || t.touched)" class="invalid-feedback">
+            <div *ngIf="t.errors['required']">
+              Name is required.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <p>Select section</p>
+        <mat-selection-list (selectionChange)="onSelectionChange(s.selectedOptions.selected[0])" [multiple]="false" #s>
+          <mat-list-option *ngFor="let section of this.sections" [value]="section">
+            {{section.section_name}}
+          </mat-list-option>
+          <mat-list-item *ngIf="this.sections.length===0">
+            <span style="color: grey">No sections available.</span>
+          </mat-list-item>
+        </mat-selection-list>
+        <div *ngIf="this.isSubmitted && !this.isSelected" class="invalid-list-error">
+          <div>
+            Section is required.
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button [disabled]="t.invalid" type="button" class="btn btn-outline-dark" (click)="close()">Add</button>
+  </div>
+</ng-template>
+
+<button type="button" mat-raised-button color="button-color" class="course-button" (click)="open(content)">Send
+  recording
+</button>

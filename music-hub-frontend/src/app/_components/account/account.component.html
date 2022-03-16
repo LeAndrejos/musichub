@@ -1,0 +1,38 @@
+<h1>Change account data</h1>
+<div class="inputs">
+  <div class="basic-input">
+    <form>
+      <div class="form-control input-card">
+        <label for="username">New username</label>
+        <input class="form-control" id="username" name="username" type="text" [(ngModel)]="username" required
+               minlength="6" #u="ngModel" [ngClass]="{ 'is-invalid': u.invalid && (u.dirty || u.touched) }">
+        <div *ngIf="u.invalid && (u.dirty || u.touched)" class="invalid-feedback">
+          <div *ngIf="u.errors['required']">
+            Username is required.
+          </div>
+          <div *ngIf="u.errors['minlength']">
+            Username must be at least 6 characters long.
+          </div>
+        </div>
+      </div>
+      <div class="form-control input-card">
+        <label for="password">New password</label>
+        <input class="form-control" id="password" name="password" type="password" [(ngModel)]="password" required
+               minlength="6" #p="ngModel" [ngClass]="{ 'is-invalid': p.invalid && (p.dirty || p.touched) }">
+        <div *ngIf="p.invalid && (p.dirty || p.touched)" class="invalid-feedback">
+          <div *ngIf="p.errors['required']">
+            Password is required.
+          </div>
+          <div *ngIf="p.errors['minlength']">
+            Password must be at least 6 characters long.
+          </div>
+        </div>
+      </div>
+      <div class="btn-container">
+        <button type="submit" mat-raised-button color="button-color" class="course-button"
+                (click)="this.updateAccount()">Save
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

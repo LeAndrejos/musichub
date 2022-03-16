@@ -1,0 +1,19 @@
+<div class="courses-buttons">
+  <button *ngIf="canCreateCourse()" mat-raised-button color="button-color" class="course-button"
+          (click)="goToCourseCreate()">Create
+  </button>
+</div>
+
+<div fxLayout.xs="column" fxLayout="row wrap" fxLayoutGap="10px" ngClass.gt-xs="ml-10">
+  <mat-card fxFlex.sm="0 1 calc(50%-10px)" fxFlex.md="0 1 calc(33%-10px)" fxFlex.gt-md="0 1 calc(25%-10px)"
+            *ngFor="let course of CoursesInfo">
+    <mat-card-title>{{course.title}}</mat-card-title>
+    <img mat-card-image [src]="course.avatar" class="image" (click)="goToCourse(course)" style="cursor: pointer">
+<!--    <mat-card-actions>-->
+<!--      <button mat-icon-button>-->
+<!--        <mat-icon>delete</mat-icon>-->
+<!--      </button>-->
+<!--    </mat-card-actions>-->
+  </mat-card>
+
+</div>
