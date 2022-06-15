@@ -19,17 +19,17 @@ public class ChatAttachmentService {
     @Autowired
     ChatSectionRepository chatSectionRepository;
 
-    public List<ChatAttachment> getAttachmentsByChatSection(String sectionId){
+    public List<ChatAttachment> getAttachmentsByChatSection(String sectionId) {
         ChatAttachmentSection chatAttachmentSection = chatSectionRepository.findByChatAttachmentSectionId(UUID.fromString(sectionId));
         return chatAttachmentRepository.findByChatAttachmentSectionId(chatAttachmentSection);
     }
 
 
-    public ChatAttachment postAttachment(String sectionId, String name){
+    public ChatAttachment postAttachment(String sectionId, String name) {
         ChatAttachmentSection chatAttachmentSection = chatSectionRepository.findByChatAttachmentSectionId(UUID.fromString(sectionId));
-        try{
-            return chatAttachmentRepository.save(new ChatAttachment(UUID.randomUUID(),chatAttachmentSection,name));
-        }catch (Exception e){
+        try {
+            return chatAttachmentRepository.save(new ChatAttachment(UUID.randomUUID(), chatAttachmentSection, name));
+        } catch (Exception e) {
             return null;
         }
     }

@@ -22,10 +22,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class FileService {
     private final MusicHubMinioClient client;
-    private final UserRepository userRepository;
-    private final CourseRepository courseRepository;
     private final AttachmentRepository attachmentRepository;
-    private final AttachmentService attachmentService;
 
     public void saveFile(MultipartFile file, User user, String attachmentId){
         Attachment attachment = attachmentRepository.findByAttachmentId(UUID.fromString(attachmentId));
@@ -41,11 +38,6 @@ public class FileService {
     public void saveAttachment(MultipartFile file, ChatAttachment chatAttachment){
 
         client.uploadFile(file,"ChatAttachment_"+chatAttachment.getChat_attachment_id());
-    }
-
-    public InputStream getAttachmentFileContent(String attachmentId) throws Exception{
-        String name = attachmentService.getFileNameForAttachment(attachmentId);
-        return client.getFileContent(name);
     }
 
     public void saveUserFile(MultipartFile file, User user, Course course){

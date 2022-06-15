@@ -5,14 +5,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import java.util.Date;
+import javax.persistence.*;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -35,4 +31,10 @@ public class Section {
     @ManyToOne
     @JoinColumn(name="course_id")
     private Course course;
+    @ManyToOne
+    @JoinColumn(name="parent_section_id")
+    private Section parentSection;
+    @JsonIgnore
+    @OneToMany(mappedBy = "parentSection")
+    private Set<Section> childSections;
 }

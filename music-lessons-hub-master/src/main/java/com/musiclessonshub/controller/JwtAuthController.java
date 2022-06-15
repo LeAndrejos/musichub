@@ -49,7 +49,7 @@ public class JwtAuthController {
                     .claim("roles", user.getRole()) // 2
                     .setIssuedAt(now) // 3
                     .setExpiration(new Date(expireInMilis + now.getTime())) // 4
-                    .signWith(SignatureAlgorithm.HS512, "secretkey").compact();
+                    .signWith(SignatureAlgorithm.HS512, JwtService.secret).compact();
 
             MinimalJwtUser jwtUser = new MinimalJwtUser(user.getUsername(),
                     user.getRole());

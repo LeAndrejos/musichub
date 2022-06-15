@@ -10,28 +10,25 @@ import com.musiclessonshub.repository.CourseRepository;
 import com.musiclessonshub.repository.CourseToUserRepository;
 import com.musiclessonshub.repository.SectionRepository;
 import com.musiclessonshub.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@Component
+@RequiredArgsConstructor
+@Service
 public class CourseService {
 
-    @Autowired
-    CourseRepository courseRepository;
-
-    @Autowired
-    CourseToUserRepository courseToUserRepository;
-
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    SectionRepository sectionRepository;
+    private final CourseRepository courseRepository;
+    private final CourseToUserRepository courseToUserRepository;
+    private final UserRepository userRepository;
+    private final SectionRepository sectionRepository;
+    private final AttachmentService attachmentService;
+    private final MeetingService meetingService;
 
     public Course createCourse(CourseBean course, User teacher) {
         Course newCourse = new Course(UUID.randomUUID(), course.getTitle(), course.getAvatar(), course.getDescription(), teacher);
@@ -79,14 +76,21 @@ public class CourseService {
 
     public Section addSectionToCourse(SectionBean sectionBean, String courseId) {
         Course course = courseRepository.findByCourseId(UUID.fromString(courseId));
-        Section newSection = new Section(UUID.randomUUID(), sectionBean.getSectionName(), sectionBean.getDescription(), 1, course);
+        Section parentSection = !sectionBean.getParentSectionId().isEmpty() ? sectionRepository.findBySectionId(UUID.fromString(sectionBean.getParentSectionId())) : null;
+        Section newSection = new Section(UUID.randomUUID(), sectionBean.getSectionName(), sectionBean.getDescription(), 1, course, parentSection, null);
         sectionRepository.save(newSection);
         return newSection;
     }
 
-    public List<Section> getSections(String courseId) {
+    public List<Section> getParentSections(String courseId) {
         Course course = courseRepository.findByCourseId(UUID.fromString(courseId));
-        return sectionRepository.findByCourse(course);
+        return sectionRepository.findByCourseAndParentSection(course, null);
+    }
+
+    public List<Section> getSubsections(String courseId, String sectionId) {
+        Course course = courseRepository.findByCourseId(UUID.fromString(courseId));
+        Section section = sectionRepository.findBySectionId(UUID.fromString(sectionId));
+        return sectionRepository.findByCourseAndParentSection(course, section);
     }
 
     public Course getCourseByTitle(String courseTitle) {
@@ -105,12 +109,32 @@ public class CourseService {
     public void deleteParticipantFromCourse(String courseId, String studentId) {
         Course course = courseRepository.findByCourseId(UUID.fromString(courseId));
         User user = userRepository.findByUserId(UUID.fromString(studentId));
+        attachmentService.deleteAllForStudent(studentId, course);
+        meetingService.deleteAllForUser(user, course);
         CourseToUser courseToUserToDelete = courseToUserRepository.findByCourseAndUser(course, user);
         courseToUserRepository.delete(courseToUserToDelete);
     }
 
     public User getOwnerOfCourse(String courseId) {
         return courseRepository.findByCourseId(UUID.fromString(courseId)).getTeacher();
+    }
+
+    public int getChildSectionNumber(String courseId, String sectionId) {
+        return sectionRepository.findBySectionId(UUID.fromString(sectionId)).getChildSections().size();
+    }
+
+    public void deleteCourse(String courseId) {
+        Course course = courseRepository.findByCourseId(UUID.fromString(courseId));
+        List<Section> sections = sectionRepository.findByCourse(course);
+        sections.stream().filter(section -> section.getParentSection() != null).forEach(section -> deleteSection(section.getSectionId().toString()));
+        sections.stream().filter(section -> section.getParentSection() == null).forEach(section -> deleteSection(section.getSectionId().toString()));
+        courseToUserRepository.deleteAll(courseToUserRepository.findByCourse(course));
+        courseRepository.delete(course);
+    }
+
+    public void deleteSection(String sectionId) {
+        attachmentService.deleteAllForSection(sectionId);
+        sectionRepository.deleteById(UUID.fromString(sectionId));
     }
 
 }

@@ -1,17 +1,8 @@
 package com.musiclessonshub.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.UUID;
 
 @Entity
@@ -25,7 +16,7 @@ public class ChatAttachment {
     @Id
     private UUID chat_attachment_id;
     @ManyToOne
-    @JoinColumn(name="chat_attachment_section_id")
+    @JoinColumn(name = "chat_attachment_section_id")
     private ChatAttachmentSection chatAttachmentSectionId;
 
     @Column(name = "attachment_name")

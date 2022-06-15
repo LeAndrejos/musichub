@@ -2,24 +2,23 @@ package com.musiclessonshub.controller;
 
 import com.musiclessonshub.bean.AttachmentBean;
 import com.musiclessonshub.model.Attachment;
-import com.musiclessonshub.repository.AttachmentRepository;
 import com.musiclessonshub.service.AttachmentService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-//@CrossOrigin(origins = "http://34.118.31.153:4200")
+
+@RequiredArgsConstructor
+@RequestMapping("/attachment")
 @RestController
 public class AttachmentController {
 
-
-    @Autowired
-    AttachmentService attachmentService;
+    private final AttachmentService attachmentService;
 
     //todo dodac autoryzacje
-    @PostMapping(value = "/attachment/{sectionId}")
+    @PostMapping(value = "/{sectionId}")
     public ResponseEntity<?> addAttachment(@PathVariable(name="sectionId") String sectionId, @RequestBody AttachmentBean attachmentBean) {
         Attachment attachment = attachmentService.addAttachment(sectionId,attachmentBean);
         if (attachment != null) {
@@ -29,7 +28,7 @@ public class AttachmentController {
 
     }
 
-    @GetMapping(value = "/attachment/{sectionId}")
+    @GetMapping(value = "/{sectionId}")
     public ResponseEntity<?> getAttachments(@PathVariable(name="sectionId") String sectionId){
         List<Attachment> attachments =  attachmentService.getAttachmentsForSection(sectionId);
         if (attachments != null) {
@@ -38,7 +37,7 @@ public class AttachmentController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
-    @DeleteMapping(value = "/attachment/{attachmentId}")
+    @DeleteMapping(value = "/{attachmentId}")
     public ResponseEntity<?> deleteAttachment(@PathVariable(name = "attachmentId") String attachmentId) {
         attachmentService.deleteAttachment(attachmentId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

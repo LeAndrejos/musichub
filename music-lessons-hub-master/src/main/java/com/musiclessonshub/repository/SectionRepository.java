@@ -12,4 +12,7 @@ import java.util.UUID;
 public interface SectionRepository extends JpaRepository<Section, UUID> {
     Section findBySectionId(UUID sectionId);
     List<Section> findByCourse(Course courseId);
+    List<Section> findByCourseAndParentSection(Course course, Section parentSection);
+    List<Section> findAllByCourse(Course course);
+
 }

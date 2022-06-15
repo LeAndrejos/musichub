@@ -14,4 +14,5 @@ public interface MeetingRepository extends JpaRepository<Meeting, UUID> {
     List<Meeting> findByTeacherAndCourseId(User teacher, Course course);
     List<Meeting> findByStudentAndCourseId(User student, Course course);
     Meeting findByMeetingId(UUID meetingId);
+    void deleteAllByStudentAndCourseId(User student, Course course);
 }

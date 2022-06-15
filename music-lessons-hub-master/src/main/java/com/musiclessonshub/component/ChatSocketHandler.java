@@ -1,8 +1,6 @@
 package com.musiclessonshub.component;
 
 import com.musiclessonshub.service.MessageService;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -28,7 +26,7 @@ public class ChatSocketHandler extends TextWebSocketHandler {
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        if(!message.getPayload().equals("ping")) {
+        if (!message.getPayload().equals("ping")) {
             for (WebSocketSession webSocketSession : sessions) {
                 if (webSocketSession.isOpen() && !session.getId().equals(webSocketSession.getId())) {
                     webSocketSession.sendMessage(message);

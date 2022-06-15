@@ -8,4 +8,5 @@ import lombok.Setter;
 public class SectionBean {
     private String sectionName;
     private String description;
+    private String parentSectionId;
 }

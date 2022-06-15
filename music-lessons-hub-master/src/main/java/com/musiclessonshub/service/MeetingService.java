@@ -10,6 +10,7 @@ import com.musiclessonshub.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
 import java.util.Comparator;
 import java.util.List;
@@ -49,6 +50,11 @@ public class MeetingService {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    @Transactional
+    public void deleteAllForUser(User user, Course course) {
+        meetingRepository.deleteAllByStudentAndCourseId(user, course);
     }
 
     public Meeting getMeeting(String meetingId) {

@@ -20,17 +20,17 @@ public class ChatSectionService {
     ChatSectionRepository chatSectionRepository;
 
 
-    public boolean postSection(String chatId, String sectionName){
+    public boolean postSection(String chatId, String sectionName) {
         Chat chat = chatRepository.findByChatId(UUID.fromString(chatId));
-        try{
-            chatSectionRepository.save(new ChatAttachmentSection(UUID.randomUUID(),chat,sectionName));
+        try {
+            chatSectionRepository.save(new ChatAttachmentSection(UUID.randomUUID(), chat, sectionName));
             return true;
-        }catch (Exception e){
+        } catch (Exception e) {
             return false;
         }
     }
 
-    public List<ChatAttachmentSection> getSections(String chatId){
+    public List<ChatAttachmentSection> getSections(String chatId) {
         Chat chat = chatRepository.findByChatId(UUID.fromString(chatId));
         return chatSectionRepository.findByChatId(chat);
     }

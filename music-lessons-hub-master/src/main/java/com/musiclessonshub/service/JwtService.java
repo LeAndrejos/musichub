@@ -5,7 +5,7 @@ import com.musiclessonshub.bean.MinimalJwtUser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.apache.tomcat.util.http.Parameters;
+import lombok.Getter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -29,8 +29,9 @@ public class JwtService {
     @Value()
     private Long expireHours = 24L;
 
-    private String plainSecret = "plainsecretasdaa";
+    public static String secret = "plainsecretasdata123";
 
+    @Getter
     private String encodedSecret;
 
     public Authentication getAuthorization(String token) {
@@ -43,7 +44,7 @@ public class JwtService {
 
     @PostConstruct
     protected void init() {
-        this.encodedSecret = generateEncodedSecret(this.plainSecret);
+        this.encodedSecret = generateEncodedSecret(secret);
     }
 
     private String generateEncodedSecret(String plainSecret) {
@@ -53,7 +54,7 @@ public class JwtService {
         }
         return Base64
                 .getEncoder()
-                .encodeToString(this.plainSecret.getBytes());
+                .encodeToString(secret.getBytes());
     }
 
     private Date getExpirationTime() {
@@ -86,10 +87,8 @@ public class JwtService {
 
         Date now = new Date();
 
-        List<String> array = new ArrayList<String>();
+        List<String> array = new ArrayList<>();
         array.add(jwtUser.getRole());
-
-
 
 
         return Jwts.builder()
@@ -98,7 +97,7 @@ public class JwtService {
                 .claim("roles", array)
                 .setIssuedAt(now)
                 .setExpiration(getExpirationTime())
-                .signWith(SignatureAlgorithm.HS512, encodedSecret)
+                .signWith(SignatureAlgorithm.HS512, secret)
                 .compact();
     }
 }

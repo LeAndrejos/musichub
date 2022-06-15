@@ -8,31 +8,24 @@ import com.musiclessonshub.model.Course;
 import com.musiclessonshub.model.CourseToUser;
 import com.musiclessonshub.model.Section;
 import com.musiclessonshub.model.User;
-import com.musiclessonshub.repository.UserRepository;
 import com.musiclessonshub.service.CourseService;
 import com.musiclessonshub.service.UserService;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.sound.midi.SysexMessage;
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
+@RequiredArgsConstructor
+@RequestMapping("/course")
 @RestController
-@AllArgsConstructor
-//@CrossOrigin(origins = "http://34.118.31.153:4200")
 public class CourseController {
 
     private final UserService userService;
     private final CourseService courseService;
 
-    @PostMapping(value = "/course")
+    @PostMapping
     public ResponseEntity<?> createCourse(@RequestHeader("Authorization") String token, @RequestBody CourseBean course) {
         String role = RoleConfig.getRoleFromToken(token);
 
@@ -51,7 +44,7 @@ public class CourseController {
     }
 
     //todo dodać autoryzacje
-    @GetMapping(value = "/course")
+    @GetMapping
     public ResponseEntity<?> getCourses(@RequestHeader("Authorization") String token) {
         String role = RoleConfig.getRoleFromToken(token);
 
@@ -68,7 +61,7 @@ public class CourseController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
-    @GetMapping(value = "/course/{courseId}")
+    @GetMapping(value = "/{courseId}")
     //sprawdzenie czy ma dostęp
     public ResponseEntity<?> getSelectedCourse(@PathVariable(name = "courseId") String courseId) {
         Course course = courseService.getCourseById(courseId);
@@ -79,7 +72,7 @@ public class CourseController {
     }
 
     //sprawdzenie czy ma dostęp
-    @GetMapping(value = "/course/{courseId}/showParticipants")
+    @GetMapping(value = "/{courseId}/showParticipants")
     public ResponseEntity<?> getParticipantsOfCourse(@RequestHeader("Authorization") String token, @PathVariable(name = "courseId") String courseId, @RequestParam(required = false) String admin) {
         List<User> users = courseService.getParticipantsOfCourse(courseId);
         if (admin.equals("true")) {
@@ -94,7 +87,7 @@ public class CourseController {
     }
 
     //sprawdzenie czy ma dostęp
-    @PostMapping(value = "/course/{courseId}/addStudent/{studentId}")
+    @PostMapping(value = "/{courseId}/addStudent/{studentId}")
     public ResponseEntity<?> addParticipant(@PathVariable(name = "courseId") String courseId, @PathVariable(name = "studentId") String studentId) {
         CourseToUser courseToUser = courseService.addParticipantToCourse(courseId, studentId);
         if (courseToUser != null) {
@@ -104,7 +97,7 @@ public class CourseController {
     }
 
     //todo dodać autoryzacje
-    @PostMapping(value = "/course/{courseId}/section")
+    @PostMapping(value = "/{courseId}/section")
     public ResponseEntity<?> addSectionToCourse(@PathVariable(name = "courseId") String courseId, @RequestBody SectionBean section) {
         Section success = courseService.addSectionToCourse(section, courseId);
         if (success != null) {
@@ -114,28 +107,52 @@ public class CourseController {
     }
 
     //todo dodać autoryzacje
-    @GetMapping(value = "/course/{courseId}/section")
-    public ResponseEntity<?> getSections(@PathVariable(name = "courseId") String courseId) {
-        List<Section> sections = courseService.getSections(courseId);
+    @GetMapping(value = "/{courseId}/section")
+    public ResponseEntity<?> getParentSections(@PathVariable(name = "courseId") String courseId) {
+        List<Section> sections = courseService.getParentSections(courseId);
         if (sections != null) {
             return ResponseEntity.status(HttpStatus.OK).body(sections);
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
-    @GetMapping(value = "/course/title")
+    @GetMapping(value = "/{courseId}/section/{sectionId}/subsection")
+    public ResponseEntity<?> getSubsections(@PathVariable(name = "courseId") String courseId, @PathVariable(name = "sectionId") String sectionId) {
+        List<Section> sections = courseService.getSubsections(courseId, sectionId);
+        if (sections != null) {
+            return ResponseEntity.status(HttpStatus.OK).body(sections);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
+
+    @GetMapping(value = "/title")
     public Course getCourseByTitle(@RequestParam String courseTitle) {
         return courseService.getCourseByTitle(courseTitle);
     }
 
-    @PutMapping(value = "/course/{courseId}")
+    @PutMapping(value = "/{courseId}")
     public ResponseEntity<?> updateCourse(@PathVariable(name = "courseId") String courseId, @RequestBody CourseBean course) {
         return ResponseEntity.status(HttpStatus.OK).body(courseService.updateCourse(courseId, course));
     }
 
-    @DeleteMapping(value = "/course/{courseId}/deleteStudent/{studentId}")
+    @DeleteMapping(value = "/{courseId}/deleteStudent/{studentId}")
     public ResponseEntity<?> deleteParticipant(@PathVariable(name = "courseId") String courseId, @PathVariable(name = "studentId") String studentId) {
         courseService.deleteParticipantFromCourse(courseId, studentId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @GetMapping(value = "/{courseId}/section/{sectionId}/subsection/length")
+    public int getChildSectionNumber(@PathVariable(name = "courseId") String courseId, @PathVariable(name = "sectionId") String sectionId) {
+        return courseService.getChildSectionNumber(courseId, sectionId);
+    }
+
+    @DeleteMapping(value = "/{courseId}/section/{sectionId}")
+    public void deleteSection(@PathVariable(name = "courseId") String courseId, @PathVariable(name = "sectionId") String sectionId) {
+        courseService.deleteSection(sectionId);
+    }
+
+    @DeleteMapping(value = "/{courseId}")
+    public void deleteCourse(@PathVariable(name = "courseId") String courseId) {
+        courseService.deleteCourse(courseId);
     }
 }

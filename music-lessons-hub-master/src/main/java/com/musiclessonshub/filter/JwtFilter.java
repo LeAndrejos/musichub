@@ -1,7 +1,7 @@
 package com.musiclessonshub.filter;
 
 import com.musiclessonshub.service.JwtService;
-import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,11 +15,12 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Date;
 
 public class JwtFilter extends AbstractAuthenticationProcessingFilter {
 
-    private JwtService jwtTokenService;
-    private String authHeader;
+    private final JwtService jwtTokenService;
+    private final String authHeader;
 
     public JwtFilter(String defaultFilterProcessesUrl, JwtService jwtTokenService, String authHeader) {
 
@@ -45,13 +46,9 @@ public class JwtFilter extends AbstractAuthenticationProcessingFilter {
         }
 
         try {
-            Authentication authentication = jwtTokenService.getAuthorization(authHeaderVal);
-            System.out.println(authentication.toString());
-
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-        }
-        catch(JwtException e) {
-            httpResponse.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
+            Jwts.parser().setSigningKey(JwtService.secret).parseClaimsJws(authHeaderVal).getBody();
+        } catch (SignatureException | ExpiredJwtException e) {
+            httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
 
@@ -61,7 +58,6 @@ public class JwtFilter extends AbstractAuthenticationProcessingFilter {
     @Override
     public Authentication attemptAuthentication(HttpServletRequest httpRequest, HttpServletResponse httpResponse)
             throws AuthenticationException, IOException, ServletException {
-
         return null;
     }
 }
