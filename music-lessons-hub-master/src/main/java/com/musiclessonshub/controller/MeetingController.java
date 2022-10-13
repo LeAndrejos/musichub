@@ -40,4 +40,9 @@ public class MeetingController {
     public Meeting getMeeting(@PathVariable(name = "meetingId") String meetingId) {
         return meetingService.getMeeting(meetingId);
     }
+
+    @DeleteMapping(value = "/{meetingId}")
+    public void deleteMeeting(@PathVariable(name = "meetingId") String meetingId) {
+        meetingService.deleteMeeting(meetingId);
+    }
 }

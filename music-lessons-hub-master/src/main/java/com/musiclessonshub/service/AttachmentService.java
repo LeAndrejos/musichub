@@ -55,9 +55,13 @@ public class AttachmentService {
         attachments.forEach(attachment -> deleteAttachment(attachment.getAttachmentId().toString()));
     }
 
-    public void deleteAllForStudent(String userId, Course course) {
+    public void deleteAllForStudentInCourse(String userId, Course course) {
         User user = userRepository.findByUserId(UUID.fromString(userId));
         sectionRepository.findAllByCourse(course).forEach(s -> attachmentRepository.findAllByUserAndSectionId(user, s).forEach(a -> this.deleteAttachment(a.getAttachmentId().toString())));
+    }
+
+    public void deleteAllForStudent(User user) {
+        attachmentRepository.findAllByUser(user).forEach(a -> this.deleteAttachment(a.getAttachmentId().toString()));
     }
 
 }

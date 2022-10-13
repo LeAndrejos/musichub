@@ -12,4 +12,5 @@ public interface AttachmentRepository extends JpaRepository<Attachment, UUID> {
     List<Attachment> findBySectionId(Section sectionId);
     Attachment findByAttachmentId(UUID attachmentId);
     List<Attachment> findAllByUserAndSectionId(User user, Section section);
+    List<Attachment> findAllByUser(User user);
 }

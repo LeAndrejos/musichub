@@ -53,7 +53,11 @@ public class CourseController {
             User user = userService.findByUsername(username);
             List<Course> courses = courseService.getCoursesForUser(user);
             return ResponseEntity.status(HttpStatus.OK).body(courses);
-        } else if (role != null) {
+        } else if (role != null&& role.equals("TEACHER")) {
+            User user = userService.findByUsername(username);
+            List<Course> courses = courseService.getCoursesForTeacher(user);
+            return ResponseEntity.status(HttpStatus.OK).body(courses);
+        } else if (role != null&& role.equals("ADMIN")){
             List<Course> courses = courseService.getCourses();
             return ResponseEntity.status(HttpStatus.OK).body(courses);
         }
@@ -101,6 +105,15 @@ public class CourseController {
     public ResponseEntity<?> addSectionToCourse(@PathVariable(name = "courseId") String courseId, @RequestBody SectionBean section) {
         Section success = courseService.addSectionToCourse(section, courseId);
         if (success != null) {
+            return ResponseEntity.status(HttpStatus.OK).body(success);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
+
+    @PutMapping(value = "/{courseId}/section/{sectionId}")
+    public ResponseEntity<?> editSection(@PathVariable(name = "courseId") String courseId, @PathVariable(name = "sectionId") String sectionId, @RequestBody SectionBean section) {
+        Section success = courseService.updateSection(section, sectionId);
+        if(success != null) {
             return ResponseEntity.status(HttpStatus.OK).body(success);
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();

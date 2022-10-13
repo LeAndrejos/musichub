@@ -53,8 +53,17 @@ public class MeetingService {
     }
 
     @Transactional
-    public void deleteAllForUser(User user, Course course) {
+    public void deleteAllForStudentInCourse(User user, Course course) {
         meetingRepository.deleteAllByStudentAndCourseId(user, course);
+    }
+
+    @Transactional
+    public void deleteAllForStudent(User user) {
+        meetingRepository.deleteAllByStudent(user);
+    }
+
+    public void deleteMeeting(String meetingId) {
+        meetingRepository.deleteById(UUID.fromString(meetingId));
     }
 
     public Meeting getMeeting(String meetingId) {

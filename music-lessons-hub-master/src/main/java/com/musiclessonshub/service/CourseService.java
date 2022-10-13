@@ -11,7 +11,6 @@ import com.musiclessonshub.repository.CourseToUserRepository;
 import com.musiclessonshub.repository.SectionRepository;
 import com.musiclessonshub.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -47,6 +46,10 @@ public class CourseService {
 
     public List<Course> getCoursesForUser(User user) {
         return courseToUserRepository.findByUser(user).stream().map(CourseToUser::getCourse).collect(Collectors.toList());
+    }
+
+    public List<Course> getCoursesForTeacher(User user) {
+        return courseRepository.findAllByTeacher(user);
     }
 
     public Course getCourseById(String id) {
@@ -109,8 +112,8 @@ public class CourseService {
     public void deleteParticipantFromCourse(String courseId, String studentId) {
         Course course = courseRepository.findByCourseId(UUID.fromString(courseId));
         User user = userRepository.findByUserId(UUID.fromString(studentId));
-        attachmentService.deleteAllForStudent(studentId, course);
-        meetingService.deleteAllForUser(user, course);
+        attachmentService.deleteAllForStudentInCourse(studentId, course);
+        meetingService.deleteAllForStudentInCourse(user, course);
         CourseToUser courseToUserToDelete = courseToUserRepository.findByCourseAndUser(course, user);
         courseToUserRepository.delete(courseToUserToDelete);
     }
@@ -135,6 +138,15 @@ public class CourseService {
     public void deleteSection(String sectionId) {
         attachmentService.deleteAllForSection(sectionId);
         sectionRepository.deleteById(UUID.fromString(sectionId));
+    }
+
+    public Section updateSection(SectionBean section, String sectionId) {
+        Section updatedSection = sectionRepository.findBySectionId(UUID.fromString(sectionId));
+        updatedSection.setDescription(section.getDescription());
+        updatedSection.setSection_name(section.getSectionName());
+        sectionRepository.save(updatedSection);
+
+        return updatedSection;
     }
 
 }

@@ -58,4 +58,23 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
     }
 
+    @DeleteMapping(value = "/user/{username}")
+    public void deleteUser(@RequestHeader("Authorization") String token, @PathVariable("username") String username) {
+        String role = RoleConfig.getRoleFromToken(token);
+        if (role.equals("ADMIN")) {
+            User user = userService.findByUsername(username);
+            userService.deleteUser(user);
+        }
+    }
+
+    @PostMapping(value = "/user/createTeacher")
+    public ResponseEntity<?> createTeacher(@RequestHeader("Authorization") String token) {
+        String role = RoleConfig.getRoleFromToken(token);
+        if(role.equals("ADMIN")) {
+            UserBean newTeacher = userService.createTeacher();
+            return ResponseEntity.status(HttpStatus.CREATED).body(newTeacher);
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
 }

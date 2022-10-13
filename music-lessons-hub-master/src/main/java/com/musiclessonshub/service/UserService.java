@@ -2,26 +2,17 @@ package com.musiclessonshub.service;
 
 import com.musiclessonshub.bean.UserBean;
 import com.musiclessonshub.exception.UsernameTakenException;
-import com.musiclessonshub.model.Course;
 import com.musiclessonshub.model.Salt;
 import com.musiclessonshub.model.User;
-import com.musiclessonshub.repository.CourseRepository;
+import com.musiclessonshub.repository.CourseToUserRepository;
 import com.musiclessonshub.repository.UserRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
+import net.bytebuddy.utility.RandomString;
 import org.springframework.security.crypto.bcrypt.BCrypt;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-import java.awt.desktop.SystemSleepEvent;
-import java.security.SecureRandom;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
 
 
 @Service
@@ -30,15 +21,15 @@ public class UserService {
 
     UserRepository userRepository;
     CourseService courseService;
+    AttachmentService attachmentService;
+    MeetingService meetingService;
+    CourseToUserRepository courseToUserRepository;
+
     Salt salt;
 
     public User findUserByUsernameAndPassword(String username, String password) {
         String pw_hash = BCrypt.hashpw(password, salt.getSalt());
-        User user = userRepository.findByUsernameAndPassword(username, pw_hash);
-        if (user != null) {
-            return user;
-        }
-        return null;
+        return userRepository.findByUsernameAndPassword(username, pw_hash);
     }
 
     public User findByUsername(String username) {
@@ -70,6 +61,27 @@ public class UserService {
         user.setPassword(BCrypt.hashpw(userBean.getPassword(), salt.getSalt()));
         try {
             return userRepository.save(user);
+        } catch (Exception e) {
+            throw new UsernameTakenException();
+        }
+    }
+
+    public void deleteUser(User user) {
+        meetingService.deleteAllForStudent(user);
+        attachmentService.deleteAllForStudent(user);
+        courseToUserRepository.deleteAll(courseToUserRepository.findByUser(user));
+        userRepository.delete(user);
+    }
+
+    public UserBean createTeacher() {
+        String password = RandomString.make();
+        String username = RandomString.make();
+        String encryptedPassword = BCrypt.hashpw(password, salt.getSalt());
+        User newTeacher = new User(UUID.randomUUID(), username, encryptedPassword, "TEACHER");
+
+        try {
+            userRepository.save(newTeacher);
+            return new UserBean(username, password);
         } catch (Exception e) {
             throw new UsernameTakenException();
         }
