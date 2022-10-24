@@ -1,0 +1,36 @@
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h1 class="modal-title" id="modal-basic-title">Add subsection</h1>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form>
+      <div class="form-group">
+        <label for="name">Name</label>
+        <div class="input-group">
+          <input id="name" name="name" [(ngModel)]="name" [ngClass]="{ 'is-invalid': n.invalid && (n.dirty || n.touched) }" #n="ngModel" class="form-control" required>
+          <div *ngIf="n.invalid && (n.dirty || n.touched)" class="invalid-feedback">
+            <div *ngIf="n.errors['required']">
+              Name is required.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="description">Description</label>
+        <div class="input-group">
+          <input id="description" name="description" [(ngModel)]="description" class="form-control">
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button [disabled]="n.invalid" type="button" class="btn btn-outline-dark" (click)="close()">Add</button>
+  </div>
+</ng-template>
+
+<button type="button" mat-icon-button class="course-button"  (click)="open(content)">
+  <mat-icon>add</mat-icon>
+</button>

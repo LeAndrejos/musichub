@@ -1,0 +1,15 @@
+<div style="display: flex; margin-left: 10%">
+  <div>
+    <h1 style="margin-top: 20px; font-size: 2.5em">Subsections</h1>
+  </div>
+  <div class="btn-container">
+    <app-add-subsection-modal *ngIf="isOwner()" (subsectionCreate)="this.addSection($event)" [course]="this.course" [parentSection]="this.section"></app-add-subsection-modal>
+  </div>
+</div>
+
+
+<div class="sections">
+  <app-section *ngFor="let section of this.sections" [course]="course" (sectionDelete)="this.deleteSubsection($event)" [section]="section"></app-section>
+</div>
+
+

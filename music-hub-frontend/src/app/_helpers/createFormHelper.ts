@@ -22,9 +22,12 @@ export class CreateFormHelper {
   }
 
   public static createSectionForm(section: Section): object {
+    const parentSection = section.parentSection != null ? section.parentSection.sectionId : '';
+
     return {
       sectionName: section.section_name,
-      description: section.description
+      description: section.description,
+      parentSectionId: parentSection
     };
   }
 
@@ -41,7 +44,7 @@ export class CreateFormHelper {
       startTime: meeting.startTime,
       teacher: meeting.teacher.userId,
       student: meeting.student.userId,
-      course: meeting.course.courseId
+      course: meeting.courseId.courseId
     };
   }
 }

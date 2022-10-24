@@ -1,13 +1,12 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
-import {Observable, of, Subscription} from 'rxjs';
+import {Observable} from 'rxjs';
 import {AccountService} from '@app/_services/account.service';
 import {User} from '@app/_models';
 import {environment} from '@environments/environment';
 import {CourseInfo} from '@app/_models/course-info';
 import {Section} from '@app/_models/section';
 import {Attachment} from '@app/_models/attachment';
-import {v4 as uuid} from 'uuid';
 import {CreateFormHelper} from '@app/_helpers/createFormHelper';
 
 @Injectable({
@@ -41,10 +40,8 @@ export class CourseService {
 
   public getCourseAvatar(id: string): Observable<Blob> {
     console.log(id);
-    // const pic = this.http.get<Blob>(`${this.apiUrl}${this.getAvatarUrl}${id}`, {responseType: "blob"}).map();
     const url = `${this.apiUrl}${this.getAvatarUrl}${id}`;
     return this.http.get(url, {responseType: 'blob'});
-    // return pic;
   }
 
   public joinNewCourse(courseId: string, userId: string): Observable<any> {
@@ -66,17 +63,13 @@ export class CourseService {
     return this.http.post(`${this.apiUrl}/course/${courseId}/section`, CreateFormHelper.createSectionForm(section));
   }
 
-  public deleteSection(section: Section): Observable<any> {
-    this.sections = this.sections.filter(it => it.sectionId !== section.sectionId);
-    return of(this.sections);
-  }
-
   public deleteAttachment(attachment: Attachment): Observable<any> {
     return this.http.delete(`${this.apiUrl}${this.deleteAttachmentUrl}${attachment.attachmentId}`);
   }
 
   public addAttachment(attachment: Attachment, sectionId: string): Observable<Attachment> {
-    return this.http.post<Attachment>(`${this.apiUrl}${this.createAttachmentUrl}${sectionId}`, CreateFormHelper.createAttachmentForm(attachment));
+    return this.http.post<Attachment>(`${this.apiUrl}${this.createAttachmentUrl}${sectionId}`,
+      CreateFormHelper.createAttachmentForm(attachment));
   }
 
   public createCourse(course: CourseInfo): Observable<any> {
@@ -109,4 +102,24 @@ export class CourseService {
     return this.http.get<CourseInfo>(`${this.apiUrl}/course/${courseId}`);
   }
 
+  public getSubsectionNumber(courseId: string, sectionId: string): Observable<number> {
+    return this.http.get<number>(`${this.apiUrl}/course/${courseId}/section/${sectionId}/subsection/length`);
+  }
+
+  public getSubsections(courseId: string, sectionId: string): Observable<Section[]> {
+    return this.http.get<Section[]>(`${this.apiUrl}/course/${courseId}/section/${sectionId}/subsection`);
+  }
+
+  public deleteSection(courseId: string, sectionId: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/course/${courseId}/section/${sectionId}`);
+  }
+
+  public deleteCourse(courseId: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/course/${courseId}`);
+  }
+
+  public updateSection(section: Section, courseId: string): Observable<Section> {
+    return this.http.put<Section>(`${this.apiUrl}/course/${courseId}/section/${section.sectionId}`,
+      CreateFormHelper.createSectionForm(section));
+  }
 }

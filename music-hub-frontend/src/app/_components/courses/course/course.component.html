@@ -1,17 +1,18 @@
 <div style="text-align: center">
   <div style="display: inline-block;">
-    <h1 style="margin: 20px; font-size: 3em">{{course.title}}</h1>
+    <h1 style="margin: 20px; font-size: 3em">{{course?.title}}</h1>
   </div>
   <div style="display: inline-block;">
     <button mat-icon-button *ngIf=isOwner() (click)="goToEditPage()">
       <mat-icon>edit</mat-icon>
     </button>
+    <app-confirmation-modal *ngIf=isOwner() (delete)="deleteCourse()"></app-confirmation-modal>
   </div>
 </div>
 <hr style="margin-left: 10%; margin-right: 10%"/>
 <div style="text-align:center">
-  <button mat-raised-button color="button-color" class="toggle-recording-button" (click)="toggleRecording()">Show
-    recording panel
+  <button mat-raised-button color="button-color" class="toggle-recording-button" (click)="toggleRecording()">
+    {{this.hideRecording ? 'Show recording panel' : 'Hide recording panel'}}
   </button>
 </div>
 <div style="text-align:center; margin-top: 20px" [hidden]="hideRecording">
@@ -36,27 +37,56 @@
 
 <hr style="margin-left: 10%; margin-right: 10%"/>
 
-<h1 style="margin-left: 10%; font-size: 2.5em">Meetings</h1>
+<div style="margin-left: 10%">
+  <div style="display: flex">
+    <div>
+      <h1 style="font-size: 2.5em">Meetings</h1>
+    </div>
+    <div class="btn-title-container">
+      <app-add-meeting-modal *ngIf="isOwner()" (meetingCreate)="this.addMeeting($event)"
+                             [courseId]="this.course.courseId"></app-add-meeting-modal>
+    </div>
+  </div>
+</div>
+
 <div class="meeting-list">
   <div class="meeting" *ngFor="let meeting of this.meetings">
-    <button matTooltip="Go to meeting room" type="button" mat-icon-button color="button-color"
-            class="course-button meeting-button"
-            (click)="goToMeeting(meeting)">
-      <mat-icon>meeting_room</mat-icon>
-    </button>
-    <span style="font-size: 1em">{{meeting.title}}</span>
-    <mat-icon>calendar_today</mat-icon>
-    {{this.formatDate(meeting.startTime)}}
-    <mat-icon>access_time</mat-icon>
-    {{this.formatTime(meeting.startTime)}}
-    <mat-icon>person_pin</mat-icon>
-    {{this.formatMeetingUser(meeting)}}
+    <div class="meeting-details">
+      <div class="meeting-label-element">
+        <button matTooltip="Go to meeting room" type="button" mat-icon-button color="button-color"
+                class="course-button meeting-button"
+                (click)="goToMeeting(meeting)">
+          <mat-icon>meeting_room</mat-icon>
+        </button>
+      </div>
+      <div class="meeting-label-element">
+        <span style="font-size: 1em">{{meeting.title}}</span>
+      </div>
+      <div class="meeting-label-element">
+        <mat-icon>calendar_today</mat-icon>
+      </div>
+      <div class="meeting-label-element">
+        {{this.formatDate(meeting.startTime)}}
+      </div>
+      <div class="meeting-label-element">
+        <mat-icon>access_time</mat-icon>
+      </div>
+      <div class="meeting-label-element">
+        {{this.formatTime(meeting.startTime)}}
+      </div>
+      <div class="meeting-label-element">
+        <mat-icon>person_pin</mat-icon>
+      </div>
+      <div class="meeting-label-element">
+        {{this.formatMeetingUser(meeting)}}
+      </div>
+    </div>
+    <div>
+      <app-confirmation-modal (delete)="deleteMeetingFromCourse(meeting)"></app-confirmation-modal>
+    </div>
   </div>
 
-  <div class="btn-container">
-    <app-add-meeting-modal *ngIf="isOwner()" (meetingCreate)="this.addMeeting($event)"
-                           [courseId]="this.course.courseId"></app-add-meeting-modal>
-  </div>
+
 </div>
 
 <hr style="margin-left: 10%; margin-right: 10%"/>
@@ -70,9 +100,7 @@
           {{participant.username}}
         </div>
         <div class="participant-delete">
-          <button mat-icon-button (click)="deleteUserFromCourse(participant)">
-            <mat-icon>delete</mat-icon>
-          </button>
+          <app-confirmation-modal (delete)="deleteUserFromCourse(participant)"></app-confirmation-modal>
         </div>
       </mat-list-item>
       <mat-list-item *ngIf="this.users.length===0">

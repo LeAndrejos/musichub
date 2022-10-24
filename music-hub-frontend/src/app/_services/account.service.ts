@@ -68,4 +68,12 @@ export class AccountService {
   updateUser(username: string, password: string): Observable<User> {
     return this.http.put<User>(`${environment.apiUrl}/user`, {username, password});
   }
+
+  deleteUser(username: string): Observable<any> {
+    return this.http.delete(`${environment.apiUrl}/user/${username}`);
+  }
+
+  createNewTeacher(): Observable<User> {
+    return this.http.post<User>(`${environment.apiUrl}/user/createTeacher`, {});
+  }
 }

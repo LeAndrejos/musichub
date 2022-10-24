@@ -27,7 +27,7 @@ export class CoursesLayoutComponent implements OnInit {
   }
 
   canCreateCourse(): boolean {
-    return this.accountService.userValue.role === 'ADMIN';
+    return this.accountService?.userValue?.role === 'TEACHER' || this.accountService?.userValue?.role === 'ADMIN';
   }
 
   goToCourseCreate(): void {

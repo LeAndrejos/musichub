@@ -73,7 +73,7 @@ export class AddMeetingModalComponent implements OnInit {
 
   close() {
     this.isSubmitted = true;
-    if (!this.isUserSelected) {
+    if (!this.canSubmit()) {
       return;
     }
     const meeting = this.createMeeting();
@@ -124,6 +124,10 @@ export class AddMeetingModalComponent implements OnInit {
 
   isInvalid(input): boolean {
     return (input.invalid && (input.dirty || input.touched)) || (input.invalid && this.isSubmitted);
+  }
+
+  canSubmit(): boolean {
+    return this.isUserSelected && this.isTimeSelected && this.title.length !== 0 && this.startTime.length !== 0;
   }
 
 }

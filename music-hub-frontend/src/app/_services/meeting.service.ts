@@ -15,6 +15,7 @@ export class MeetingService {
   private apiUrl = environment.apiUrl;
   private getMeetingsUrl = '/meeting';
   private getMeetingUrl = '/meeting';
+  private deleteMeetingUrl = '/meeting';
   private createMeetingUrl = '/meeting/create';
 
   constructor(private http: HttpClient) {
@@ -30,5 +31,9 @@ export class MeetingService {
 
   public getMeeting(meetingId: string): Observable<Meeting> {
     return this.http.get<Meeting>(`${this.apiUrl}${this.getMeetingUrl}/${meetingId}`);
+  }
+
+  public deleteMeeting(meetingId: string): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}${this.deleteMeetingUrl}/${meetingId}`);
   }
 }

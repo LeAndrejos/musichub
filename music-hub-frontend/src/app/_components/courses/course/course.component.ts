@@ -148,7 +148,7 @@ export class CourseComponent implements OnInit {
   }
 
   canEdit(): boolean {
-    return this.accountService.userValue.role === 'ADMIN';
+    return this.accountService.userValue.role === 'ADMIN' || this.accountService.userValue.role === 'TEACHER';
   }
 
   getSections(): void {
@@ -170,7 +170,7 @@ export class CourseComponent implements OnInit {
   }
 
   addMeeting(meeting: Meeting) {
-    meeting.course = this.course;
+    meeting.courseId = this.course;
     this.meetingService.createMeeting(meeting).subscribe(m => {
       this.meetings.push(m);
     });
@@ -205,12 +205,18 @@ export class CourseComponent implements OnInit {
   }
 
   isOwner(): boolean {
-    return this.course.teacher.userId === this.accountService.userValue.userId;
+    return this.course?.teacher?.userId === this.accountService.userValue.userId;
   }
 
   deleteUserFromCourse(user: User) {
     this.courseService.deleteUserFromCourse(this.course.courseId, user.userId).subscribe(() => {
       this.getParticipants();
+    });
+  }
+
+  deleteMeetingFromCourse(meeting: Meeting) {
+    this.meetingService.deleteMeeting(meeting.meetingId).subscribe(() => {
+      this.getMeetingsForUser();
     });
   }
 
@@ -226,5 +232,11 @@ export class CourseComponent implements OnInit {
 
   formatMeetingUser(meeting: Meeting): string {
     return meeting.student.username === this.accountService.userValue.username ? meeting.teacher.username : meeting.student.username;
+  }
+
+  deleteCourse() {
+    this.courseService.deleteCourse(this.courseId).subscribe(() => {
+      this.router.navigate(['/courses']);
+    });
   }
 }

@@ -10,7 +10,9 @@
       <div class="form-group">
         <label for="name">Name</label>
         <div class="input-group">
-          <input id="name" name="name" [(ngModel)]="name" [ngClass]="{ 'is-invalid': n.invalid && (n.dirty || n.touched) }" #n="ngModel" class="form-control" required>
+          <input id="name" name="name" [(ngModel)]="name"
+                 [ngClass]="{ 'is-invalid': n.invalid && (n.dirty || n.touched) }" #n="ngModel" class="form-control"
+                 required>
           <div *ngIf="n.invalid && (n.dirty || n.touched)" class="invalid-feedback">
             <div *ngIf="n.errors['required']">
               Name is required.
@@ -31,4 +33,6 @@
   </div>
 </ng-template>
 
-<button type="button" mat-raised-button color="button-color" class="course-button" (click)="open(content)">Add section</button>
+<button type="button" mat-icon-button class="course-button" (click)="open(content)">
+  <mat-icon>add</mat-icon>
+</button>

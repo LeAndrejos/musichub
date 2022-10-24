@@ -7,5 +7,5 @@ export interface Meeting {
   startTime: Date;
   teacher: User;
   student: User;
-  course: CourseInfo;
+  courseId: CourseInfo;
 }

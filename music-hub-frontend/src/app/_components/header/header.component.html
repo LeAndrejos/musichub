@@ -1,16 +1,34 @@
 <nav class="navbar navbar-expand navbar-dark bg-dark" *ngIf="user">
-  <div class="navbar-nav">
-    <a class="nav-item nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
-    <a class="nav-item nav-link" routerLink="courses" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Courses</a>
-    <a class="nav-item nav-link" (click)="logout()">Logout</a>
+  <div class="navbar-nav navbar-element">
+    <div>
+      <div style="max-width: 100px">
+        <img src="assets/logo2.png" width="100%" alt="logo">
+      </div>
+    </div>
+    <div>
+      <a class="nav-item nav-link" style="font-size: 20px" routerLink="/" routerLinkActive="active"
+         [routerLinkActiveOptions]="{exact: true}">Home</a>
+    </div>
+    <div>
+      <a class="nav-item nav-link" style="font-size: 20px" routerLink="courses" routerLinkActive="active"
+         [routerLinkActiveOptions]="{exact: true}">Courses</a>
+    </div>
+    <div>
+      <a class="nav-item nav-link" style="font-size: 20px" (click)="logout()">Logout</a>
+    </div>
   </div>
   <div class="account-btn-container">
     <div>
-      <span style="color: white">{{this.user.username}}</span>
+      <span style="color: white; font-size: 20px">{{this.user.username}}</span>
     </div>
     <button mat-icon-button color="account-button-color" (click)="goToAccount()">
       <mat-icon>account_box</mat-icon>
     </button>
+    <div *ngIf="user.role === 'ADMIN'">
+      <button matTooltip="Admin tools" type="button" mat-icon-button color="button-color" (click)="goToUserManaging()">
+        <mat-icon>group_work</mat-icon>
+      </button>
+    </div>
   </div>
 </nav>
 

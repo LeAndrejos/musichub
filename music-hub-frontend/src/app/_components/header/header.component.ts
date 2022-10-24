@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {User} from '@app/_models';
 import {AccountService} from '@app/_services';
 import {Router} from '@angular/router';
-import {ModalDismissReasons, NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-header',
@@ -38,6 +38,10 @@ export class HeaderComponent implements OnInit {
 
   goToAccount() {
     this.router.navigate(['/account/edit']);
+  }
+
+  goToUserManaging() {
+    this.router.navigate(['/manage-users']);
   }
 
 }

@@ -1,5 +1,9 @@
 <div class="section">
-  <h1>{{section.section_name}}</h1>
+  <div style="display: flex; align-items: center">
+    <h1 style="margin-right: 10px">{{section.section_name}}</h1>
+    <app-confirmation-modal *ngIf="isOwner()" (delete)="this.delete()"></app-confirmation-modal>
+    <app-edit-section-modal [section]="this.section" (sectionEdit)="this.updateSection($event)"></app-edit-section-modal>
+  </div>
   <p>{{section.description}}</p>
 
   <div style="overflow: hidden">
@@ -9,7 +13,8 @@
         <mat-list class="attachment">
           <mat-list-item *ngFor="let attachment of this.attachments">
             <div class="attachment-name">
-              <button color="button-download-color" mat-button (click)="getAttachment(attachment)">{{attachment.content}}</button>
+              <button color="button-download-color" mat-button
+                      (click)="getAttachment(attachment)">{{attachment.content}}</button>
             </div>
             <div class="participant-delete" *ngIf="isOwner()">
               <button mat-icon-button (click)="deleteAttachment(attachment)">
@@ -39,10 +44,11 @@
         <mat-list class="attachment">
           <mat-list-item *ngFor="let attachment of this.userAttachments">
             <div class="attachment-name">
-              <button color="button-download-color" mat-button (click)="getAttachment(attachment)">{{attachment.content}}</button>
+              <button color="button-download-color" mat-button
+                      (click)="getAttachment(attachment)">{{attachment.content}}</button>
               <span *ngIf="isOwner()"> --- {{attachment.user.username}}</span>
             </div>
-            <div class="participant-delete" *ngIf="!isOwner()">
+            <div class="participant-delete" *ngIf="isOwner() || isOwnerOfAttachment(attachment)">
               <button mat-icon-button (click)="deleteAttachment(attachment)">
                 <mat-icon>delete</mat-icon>
               </button>
@@ -66,4 +72,6 @@
     </div>
   </div>
 
+  <app-subsection-list *ngIf="this.section.parentSection == null" [section]="this.section" [course]="this.course"
+                       [sections]="this.subsections"></app-subsection-list>
 </div>

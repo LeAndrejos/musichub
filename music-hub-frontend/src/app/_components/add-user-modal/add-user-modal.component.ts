@@ -11,7 +11,7 @@ import {CourseService} from '@app/_services/course.service';
 })
 export class AddUserModalComponent implements OnInit {
 
-  users: User[];
+  users: User[] = [];
   user: User;
   closeResult: string;
   isSubmitted = false;
@@ -58,7 +58,7 @@ export class AddUserModalComponent implements OnInit {
   getUsers() {
     this.accountService.getUsers().subscribe(allUsers => {
       this.courseService.getUsersForCourse(this.courseId, false).subscribe(courseUsers => {
-        this.users = allUsers.filter(user => (!this.contains(courseUsers, user) && !(user.role === 'ADMIN')));
+        this.users = allUsers.filter(user => (!this.contains(courseUsers, user) && !(user.role === 'ADMIN') && !(user.role === 'TEACHER')));
       });
     });
   }

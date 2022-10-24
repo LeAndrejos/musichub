@@ -1,19 +1,22 @@
-import {ElementRef, Injectable, OnDestroy} from '@angular/core';
+import {ElementRef, Injectable} from '@angular/core';
 import {environment} from '@environments/environment';
+import {timer} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CallService {
 
-  connection: WebSocket;
-  peerConnection: RTCPeerConnection;
-  dataChannel: RTCDataChannel;
+  connection: WebSocket = null;
+  peerConnection: RTCPeerConnection = null;
+  dataChannel: RTCDataChannel = null;
   stream: MediaStream;
   videoElement: ElementRef;
   remoteStream = new MediaStream();
   meetingId: string;
   pingPongId: any;
+  offerId: any;
+  isCalling: boolean;
 
   constraints = {
     video: true,
@@ -30,9 +33,33 @@ export class CallService {
 
   constructor() {
     console.log('Constructor called!');
+  }
 
-    this.initializeConnection();
-    const configuration = null;
+  initialize() {
+    this.pingPongId = setInterval(() => this.sendPingMessage(), 1000);
+    if (this.peerConnection != null) {
+      this.peerConnection.close();
+    }
+
+    timer(500).subscribe(() => {
+      this.initializeRtcPeerConnection();
+    });
+    timer(3000).subscribe(() => {
+      this.startSendingOffers(this.videoElement);
+    });
+  }
+
+  initializeRtcPeerConnection() {
+    const configuration: RTCConfiguration = {
+      iceServers: [{
+        urls: 'stun:stun4.l.google.com:19302',
+      },
+        {
+          urls: 'turn:relay.backups.cz',
+          username: 'webrtc',
+          credential: 'webrtc',
+        }]
+    };
     this.peerConnection = new RTCPeerConnection(configuration);
     this.dataChannel = this.peerConnection.createDataChannel('dataChannel');
     this.dataChannel.onerror = (error) => console.log(error);
@@ -44,6 +71,7 @@ export class CallService {
 
     this.peerConnection.onicecandidate = event => {
       if (event.candidate) {
+        console.log('ice candidate');
         this.send({
           event: 'candidate',
           data: {
@@ -53,12 +81,6 @@ export class CallService {
         });
       }
     };
-
-    navigator.mediaDevices.getUserMedia(this.constraints).then((stream) => {
-      this.stream = stream;
-    }).catch((error) => {
-      console.log('Stream error: ', error);
-    });
   }
 
   createOffer(remoteVideo) {
@@ -79,7 +101,20 @@ export class CallService {
     });
   }
 
+  startSendingOffers(remoteVideo) {
+    console.log('Creating offer');
+    this.getStreams(remoteVideo).then();
+    this.offerId = setInterval(() => this.createOffer(remoteVideo), 1500);
+  }
+
+  stopSendingOffers() {
+    if (this.offerId) {
+      clearInterval(this.offerId);
+    }
+  }
+
   sendDisconnectMessage() {
+    this.stopSendingOffers();
     this.send({
       event: 'disconnect',
       data: {
@@ -103,23 +138,27 @@ export class CallService {
         }
       });
     });
+    this.sendStopSendingOffers();
   }
 
   handleCandidate(candidate) {
-    this.peerConnection.addIceCandidate(new RTCIceCandidate(candidate)).then();
+    this.peerConnection.addIceCandidate(new RTCIceCandidate(candidate)).then().catch();
   }
 
   handleAnswer(answer) {
     this.peerConnection.setRemoteDescription(new RTCSessionDescription(answer)).then();
     console.log('connections established successfully');
+    this.sendStopSendingOffers();
   }
 
   send(message) {
-    if (this.connection.readyState === WebSocket.CLOSED) {
+    if (this.connection === null || this.connection.readyState === WebSocket.CLOSED || this.connection.readyState === WebSocket.CLOSING) {
       this.initializeConnection();
     }
-    console.log(message);
-    this.connection.send(JSON.stringify(message));
+    timer(500).subscribe(() => {
+      console.log(message);
+      this.connection.send(JSON.stringify(message));
+    });
   }
 
   async getStreams(remoteVideo: ElementRef) {
@@ -127,7 +166,6 @@ export class CallService {
       video: true,
       audio: true
     });
-    console.log(remoteVideo);
     remoteVideo.nativeElement.srcObject = this.remoteStream;
 
     this.peerConnection.ontrack = (event) => {
@@ -148,48 +186,74 @@ export class CallService {
     };
     this.connection.onclose = () => {
       console.log('Connection closed!');
-      this.initializeConnection();
     };
 
     this.connection.onmessage = (msg) => {
-      console.log('Got message', msg.data);
       const content = JSON.parse(msg.data);
-      const data = content.data.data;
-      if (content.data.meeting_id === this.meetingId) {
-        switch (content.event) {
-          // when somebody wants to call us
-          case 'offer':
-            this.handleOffer(data, this.videoElement);
-            break;
-          case 'answer':
-            this.handleAnswer(data);
-            break;
-          // when a remote peer sends an ice candidate to us
-          case 'candidate':
-            this.handleCandidate(data);
-            break;
-          case 'disconnect':
-            this.videoElement.nativeElement.srcObject = null;
-            break;
-          default:
-            break;
+      if (content !== 'ping') {
+
+        const data = content.data.data;
+        if (content.data.meeting_id === this.meetingId) {
+          console.log('Got message', content.event);
+          switch (content.event) {
+            case 'offer':
+              this.handleOffer(data, this.videoElement);
+              break;
+            case 'answer':
+              this.handleAnswer(data);
+              break;
+            case 'candidate':
+              this.handleCandidate(data);
+              break;
+            case 'disconnect':
+              this.videoElement.nativeElement.srcObject = null;
+              break;
+            case 'stop-offers':
+              this.stopSendingOffers();
+              break;
+            default:
+              break;
+          }
         }
       }
     };
   }
 
-  private sendPingMessage() {
-    this.connection.send('ping');
+  private sendStopSendingOffers() {
+    for (let i = 0; i < 3; i++) {
+      timer(i * 1000).subscribe(() => {
+        this.send({
+          event: 'stop-offers',
+          data: {
+            data: null,
+            meeting_id: this.meetingId
+          }
+        });
+      });
+    }
   }
 
-  startMeeting() {
-    this.pingPongId = setInterval(() => this.sendPingMessage(), 1000);
+  private sendPingMessage() {
+    this.send('ping');
   }
 
   stopMeeting() {
+    this.stopSendingOffers();
     if (this.pingPongId) {
       clearInterval(this.pingPongId);
     }
+    if (this.dataChannel != null) {
+      this.dataChannel.close();
+    }
+    if (this.peerConnection != null) {
+      this.peerConnection.close();
+    }
+
+    this.remoteStream.getTracks().forEach(track => this.remoteStream.removeTrack(track));
+
+    timer(3000).subscribe(() => {
+      this.initializeRtcPeerConnection();
+    });
   }
 
 }

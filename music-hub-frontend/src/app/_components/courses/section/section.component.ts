@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {Section} from '@app/_models/section';
 import {MatAccordion} from '@angular/material/expansion';
 import {VideoService} from '@app/_services/video.service';
@@ -18,12 +18,15 @@ export class SectionComponent implements OnInit {
 
   @Input() section: Section;
   @Input() course: CourseInfo;
+  @Output() sectionDelete: EventEmitter<any> = new EventEmitter<any>();
+  @Output() sectionUpdate: EventEmitter<any> = new EventEmitter<any>();
 
   @ViewChild(MatAccordion)
   accordion: MatAccordion;
 
   attachments: Attachment[] = [];
   userAttachments: Attachment[] = [];
+  subsections: Section[] = [];
 
   constructor(private videoService: VideoService, private courseService: CourseService, private accountService: AccountService) {
   }
@@ -60,7 +63,7 @@ export class SectionComponent implements OnInit {
     this.courseService.addAttachment(attachment, this.section.sectionId).subscribe((a) => {
       if (this.accountService.userValue.userId === this.section.course.teacher.userId) {
         this.attachments.push(a);
-      }else{
+      } else {
         this.userAttachments.push(a);
       }
       this.videoService.saveAttachment(file, a.attachmentId).subscribe();
@@ -69,6 +72,10 @@ export class SectionComponent implements OnInit {
 
   isOwner(): boolean {
     return this.course.teacher.userId === this.accountService.userValue.userId;
+  }
+
+  isOwnerOfAttachment(attachment: Attachment): boolean {
+    return this.accountService.userValue.userId === attachment.user.userId;
   }
 
   getAttachments() {
@@ -85,4 +92,17 @@ export class SectionComponent implements OnInit {
       return attachments.filter(a => a.user.userId === this.accountService.userValue.userId);
     }
   }
+
+  delete() {
+    this.courseService.deleteSection(this.course.courseId, this.section.sectionId).subscribe(() => {
+      this.sectionDelete.emit(this.section.sectionId);
+    });
+  }
+
+  updateSection(section) {
+    this.courseService.updateSection(section, this.course.courseId).subscribe(s => {
+      this.sectionUpdate.emit(s);
+    });
+  }
+
 }

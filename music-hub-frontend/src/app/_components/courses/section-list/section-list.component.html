@@ -1,8 +1,18 @@
-<h1 style="margin-left: 10%; font-size: 2.5em">Sections</h1>
-<div class="sections">
-  <app-section *ngFor="let section of this.sections" [course]="course" [section]="section"></app-section>
+<div style="display: flex; margin-left: 10%">
+  <div>
+    <h1 style="font-size: 2.5em">Sections</h1>
+  </div>
+  <div>
+    <div class="btn-container">
+      <app-add-section-modal *ngIf="isOwner()" (sectionCreate)="this.addSection($event)" [course]="this.course"
+                             [numberInOrder]="this.sections.length"></app-add-section-modal>
+    </div>
+  </div>
 </div>
 
-<div class="btn-container">
-  <app-add-section-modal *ngIf="isOwner()" (sectionCreate)="this.addSection($event)" [course]="this.course" [numberInOrder]="this.sections.length"></app-add-section-modal>
+<div class="sections">
+  <app-section *ngFor="let section of this.sections" (sectionDelete)="this.deleteSection($event)" [course]="course"
+               [section]="section"></app-section>
 </div>
+
+

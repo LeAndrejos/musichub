@@ -4,12 +4,24 @@
 }
 
 .meeting {
+  display: flex;
   border-style: solid;
   margin: 20px 10%;
   padding: 20px;
   border-width: 2px;
   border-color: dimgray;
   border-radius: 25px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.meeting-details {
+  display: flex;
+  align-items: center;
+}
+
+.meeting-label-element {
+  margin-left: 10px;
 }
 
 .btn-container {
@@ -17,6 +29,11 @@
   display: flex;
   justify-content: center;
   margin-bottom: 20px;
+}
+
+.btn-title-container {
+  display: flex;
+  justify-content: center;
 }
 
 .participants-list {

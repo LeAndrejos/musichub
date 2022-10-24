@@ -8,4 +8,5 @@ export interface Section {
   course: CourseInfo;
   description: string;
   attachments: Attachment[];
+  parentSection: Section;
 }

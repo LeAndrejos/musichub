@@ -3,8 +3,31 @@
     <video #videoConference width="800" height="480" controls autoplay></video>
   </div>
   <div>
-    <button type="button" mat-raised-button color="button-color" class="course-button" *ngIf="!isCalling" (click)="call()">Start call</button>
-    <button type="button" mat-raised-button color="button-color" class="course-button" *ngIf="isCalling && !hasCallEnded" (click)="endCall()">End call</button>
+    <div>
+      <button type="button" mat-raised-button color="button-color" class="course-button" *ngIf="!isCalling"
+              (click)="call()">Start call
+      </button>
+      <button type="button" mat-raised-button color="button-color" class="course-button"
+              *ngIf="isCalling && !hasCallEnded" (click)="endCall()">End call
+      </button>
+    </div>
+    <div style="padding-top: 10px">
+      <button type="button" mat-raised-button color="button-color" class="course-button" *ngIf="!isRecording && this.isReadyToRecord()"
+              (click)="startRecording()">Start recording
+      </button>
+      <button type="button" mat-raised-button color="button-color" class="course-button" *ngIf="isRecording"
+              (click)="stopRecording()">Stop recording
+      </button>
+    </div>
+  </div>
+  <div style="padding-top: 10px">
+    <app-send-meeting-recording-modal *ngIf="!this.isRecording && this.hasRecorded" (sendRecording)="sendRecord($event)"
+                                      [meetingId]="this.meetingId"></app-send-meeting-recording-modal>
+  </div>
+  <div style="padding: 10px">
+    <button type="button" mat-raised-button color="button-color" class="course-button" (click)="goBack()">
+      Back to course
+    </button>
   </div>
 
 </div>

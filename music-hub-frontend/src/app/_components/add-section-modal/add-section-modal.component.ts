@@ -1,9 +1,8 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {ModalDismissReasons, NgbHighlight, NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {ModalDismissReasons, NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {CourseService} from '@app/_services/course.service';
 import {Section} from '@app/_models/section';
 import {CourseInfo} from '@app/_models/course-info';
-import {CreateFormHelper} from '@app/_helpers/createFormHelper';
 import {NewObjectsHelper} from '@app/_helpers/newObjectsHelper';
 
 @Component({

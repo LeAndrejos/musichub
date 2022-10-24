@@ -21,7 +21,8 @@ export class NewObjectsHelper {
       num_order: 0,
       course: null,
       description: '',
-      attachments: []
+      attachments: [],
+      parentSection: null
     };
   }
 
@@ -42,7 +43,7 @@ export class NewObjectsHelper {
       startTime: null,
       teacher: null,
       student: null,
-      course: null
+      courseId: null
     };
   }
 }

@@ -29,6 +29,10 @@ export class SectionListComponent implements OnInit {
   }
 
   isOwner(): boolean {
-    return this.course.teacher.userId === this.accountService.userValue.userId;
+    return this.course?.teacher?.userId === this.accountService.userValue.userId;
+  }
+
+  deleteSection(sectionId: string) {
+    this.sections = this.sections.filter(section => section.sectionId !== sectionId);
   }
 }
