@@ -69,6 +69,7 @@ CREATE TABLE IF NOT EXISTS courses (
     title varchar(255) NOT NULL,
     description varchar(255) NOT NULL,
     avatar varchar(255) NOT NULL,
+	is_full_course BOOLEAN NOT NULL,
     PRIMARY KEY(course_id),
     	CONSTRAINT fkUser
     	  FOREIGN KEY(teacher_id)
@@ -94,10 +95,14 @@ CREATE TABLE IF NOT EXISTS sections (
     num_order int NOT NULL,
     description varchar(255) NOT NULL,
     course_id uuid NOT NULL,
+	parent_section_id uuid,
     PRIMARY KEY(section_id),
     	CONSTRAINT fkCourse
           FOREIGN KEY(course_id)
-            REFERENCES courses
+            REFERENCES courses,
+		CONSTRAINT fkSection
+		  FOREIGN KEY (parent_section_id)
+		    REFERENCES sections
 );
 
 CREATE TABLE IF NOT EXISTS attachments (
@@ -141,7 +146,7 @@ CREATE TABLE IF NOT EXISTS meetings (
 );
 
 INSERT INTO users(user_id, username, password, role) VALUES
-('556a7e54-cc4a-11eb-b8bc-0242ac130003', 'test_user1', '$2a$10$UQh7YETj1L6C28wYezj8E.XGx9Y0.JkYFqNxgithPRSeRoK6X7SmS', 'ADMIN'), --test_password1
-('60b44e66-cc4a-11eb-b8bc-0242ac130003', 'test_user2', '$2a$10$UQh7YETj1L6C28wYezj8E.ZeENCjI/ERWCtaERKKi36ph0Oexo5z2', 'ADMIN'); -- test_password2
+('556a7e54-cc4a-11eb-b8bc-0242ac130003', 'admin', '$2a$10$UQh7YETj1L6C28wYezj8E.nbsTXtTI9apVcz.LIpo9ubdp/YuqI9y', 'ADMIN'); --password
+
 
 

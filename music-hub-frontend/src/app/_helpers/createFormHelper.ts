@@ -9,7 +9,8 @@ export class CreateFormHelper {
     return {
       title: course.title,
       avatar: course.avatar,
-      description: course.description
+      description: course.description,
+      isFullCourse: true
     };
   }
 

@@ -1,0 +1,44 @@
+<div style="text-align: center">
+  <div style="display: inline-block;">
+    <h1 style="margin: 20px; font-size: 3em">{{course?.title}}</h1>
+  </div>
+  <div style="display: inline-block;">
+    <button mat-icon-button *ngIf=isOwner() (click)="goToEditPage()">
+      <mat-icon>edit</mat-icon>
+    </button>
+    <app-confirmation-modal *ngIf=isOwner() (delete)="deleteCourse()"></app-confirmation-modal>
+  </div>
+</div>
+
+<hr style="margin-left: 10%; margin-right: 10%"/>
+
+<app-section-list [sections]="this.sections" [course]="this.course"></app-section-list>
+
+<hr style="margin-left: 10%; margin-right: 10%"/>
+
+<h1 style="margin-left: 10%; font-size: 2.5em" *ngIf="isOwner()">Participants</h1>
+<div *ngIf="isOwner()" class="participants-list">
+  <div style="width: 90%; float: left">
+    <mat-list class="participant">
+      <mat-list-item *ngFor="let participant of this.users">
+        <div class="participant-name">
+          {{participant.username}}
+        </div>
+        <div class="participant-delete">
+          <app-confirmation-modal (delete)="deleteUserFromCourse(participant)"></app-confirmation-modal>
+        </div>
+      </mat-list-item>
+      <mat-list-item *ngIf="this.users.length===0">
+        <div class="attachment-name">
+          <span style="color: grey">No users here.</span>
+        </div>
+      </mat-list-item>
+    </mat-list>
+  </div>
+
+  <div class="btn-container">
+    <app-add-user-modal (addUser)="this.addUserToCourse($event)" [courseId]="this.course.courseId"></app-add-user-modal>
+  </div>
+</div>
+
+<app-chat [courseId]="this.courseId"></app-chat>

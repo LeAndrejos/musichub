@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand navbar-dark bg-dark" *ngIf="user">
+<nav class="navbar navbar-expand navbar-dark bg-dark" *ngIf="this.isVisible()">
   <div class="navbar-nav navbar-element">
     <div>
       <div style="max-width: 100px">
@@ -9,15 +9,22 @@
       <a class="nav-item nav-link" style="font-size: 20px" routerLink="/" routerLinkActive="active"
          [routerLinkActiveOptions]="{exact: true}">Home</a>
     </div>
-    <div>
+    <div *ngIf="user">
       <a class="nav-item nav-link" style="font-size: 20px" routerLink="courses" routerLinkActive="active"
          [routerLinkActiveOptions]="{exact: true}">Courses</a>
     </div>
-    <div>
+    <div *ngIf="user">
+      <a class="nav-item nav-link" style="font-size: 20px" routerLink="video-content" routerLinkActive="active"
+         [routerLinkActiveOptions]="{exact: true}">Video Content</a>
+    </div>
+    <div *ngIf="user">
       <a class="nav-item nav-link" style="font-size: 20px" (click)="logout()">Logout</a>
     </div>
+    <div *ngIf="!user">
+      <a class="nav-item nav-link" style="font-size: 20px" (click)="login()">Login</a>
+    </div>
   </div>
-  <div class="account-btn-container">
+  <div class="account-btn-container" *ngIf="user">
     <div>
       <span style="color: white; font-size: 20px">{{this.user.username}}</span>
     </div>

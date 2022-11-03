@@ -10,7 +10,7 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['./header.component.less']
 })
 export class HeaderComponent implements OnInit {
-  user: User;
+  user: User = null;
   closeResult: string;
 
   constructor(private accountService: AccountService, private router: Router, private modalService: NgbModal) {
@@ -22,6 +22,10 @@ export class HeaderComponent implements OnInit {
 
   logout() {
     this.accountService.logout();
+  }
+
+  login(){
+    this.router.navigate(['/account/login']);
   }
 
   hasRoute(route: string): boolean {
@@ -42,6 +46,10 @@ export class HeaderComponent implements OnInit {
 
   goToUserManaging() {
     this.router.navigate(['/manage-users']);
+  }
+
+  isVisible(): boolean {
+    return this.user != null || this.router.url === '/';
   }
 
 }

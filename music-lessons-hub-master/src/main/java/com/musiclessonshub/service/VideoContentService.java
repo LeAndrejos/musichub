@@ -2,10 +2,7 @@ package com.musiclessonshub.service;
 
 import com.musiclessonshub.bean.CourseBean;
 import com.musiclessonshub.bean.SectionBean;
-import com.musiclessonshub.model.Course;
-import com.musiclessonshub.model.CourseToUser;
-import com.musiclessonshub.model.Section;
-import com.musiclessonshub.model.User;
+import com.musiclessonshub.model.*;
 import com.musiclessonshub.repository.CourseRepository;
 import com.musiclessonshub.repository.CourseToUserRepository;
 import com.musiclessonshub.repository.SectionRepository;
@@ -20,17 +17,16 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
-public class CourseService {
+public class VideoContentService {
 
     private final CourseRepository courseRepository;
     private final CourseToUserRepository courseToUserRepository;
     private final UserRepository userRepository;
     private final SectionRepository sectionRepository;
     private final AttachmentService attachmentService;
-    private final MeetingService meetingService;
 
-    public Course createCourse(CourseBean course, User teacher) {
-        Course newCourse = new Course(UUID.randomUUID(), course.getTitle(), course.getAvatar(), course.getDescription(), true, teacher);
+    public Course createVideoContent(CourseBean course, User teacher) {
+        Course newCourse = new Course(UUID.randomUUID(), course.getTitle(), course.getAvatar(), course.getDescription(), false, teacher);
         try {
             courseRepository.save(newCourse);
             return newCourse;
@@ -39,19 +35,19 @@ public class CourseService {
         }
     }
 
-    public List<Course> getCoursesForUser(User user) {
-        return courseToUserRepository.findByUser(user).stream().filter(c -> c.getCourse().isFullCourse()).map(CourseToUser::getCourse).collect(Collectors.toList());
+    public List<Course> getVideoContentsForUser(User user) {
+        return courseToUserRepository.findByUser(user).stream().filter(c -> !c.getCourse().isFullCourse()).map(CourseToUser::getCourse).collect(Collectors.toList());
     }
 
-    public List<Course> getCoursesForTeacher(User user) {
-        return courseRepository.findAllByTeacherAndIsFullCourse(user, true);
+    public List<Course> getVideoContentsForTeacher(User user) {
+        return courseRepository.findAllByTeacherAndIsFullCourse(user, false);
     }
 
-    public Course getCourseById(String id) {
+    public Course getVideoContentById(String id) {
         return courseRepository.findByCourseId(UUID.fromString(id));
     }
 
-    public CourseToUser addParticipantToCourse(String courseId, String studentId) {
+    public CourseToUser addParticipantToVideoContent(String courseId, String studentId) {
         CourseToUser courseToUser = new CourseToUser(UUID.randomUUID(), userRepository.findByUserId(UUID.fromString(studentId)), courseRepository.findByCourseId(UUID.fromString(courseId)));
         courseToUserRepository.save(courseToUser);
         try {
@@ -62,7 +58,7 @@ public class CourseService {
         }
     }
 
-    public List<User> getParticipantsOfCourse(String courseId) {
+    public List<User> getParticipantsOfVideoContent(String courseId) {
         Course course = courseRepository.findByCourseId(UUID.fromString(courseId));
         List<CourseToUser> list = courseToUserRepository.findByCourse(course);
         List<User> listOfUser = new ArrayList<>();
@@ -72,7 +68,7 @@ public class CourseService {
         return listOfUser;
     }
 
-    public Section addSectionToCourse(SectionBean sectionBean, String courseId) {
+    public Section addSectionToVideoContent(SectionBean sectionBean, String courseId) {
         Course course = courseRepository.findByCourseId(UUID.fromString(courseId));
         Section parentSection = !sectionBean.getParentSectionId().isEmpty() ? sectionRepository.findBySectionId(UUID.fromString(sectionBean.getParentSectionId())) : null;
         Section newSection = new Section(UUID.randomUUID(), sectionBean.getSectionName(), sectionBean.getDescription(), 1, course, parentSection, null);
@@ -91,12 +87,12 @@ public class CourseService {
         return sectionRepository.findByCourseAndParentSection(course, section);
     }
 
-    public Course getCourseByTitle(String courseTitle) {
-        return courseRepository.findByTitleAndIsFullCourse(courseTitle, true);
+    public Course getVideoContentByTitle(String courseTitle) {
+        return courseRepository.findByTitleAndIsFullCourse(courseTitle, false);
     }
 
     public Course updateCourse(String courseId, CourseBean course) {
-        Course c = this.getCourseById(courseId);
+        Course c = this.getVideoContentById(courseId);
         c.setTitle(course.getTitle());
         c.setDescription(course.getDescription());
         c.setAvatar(course.getAvatar());
@@ -104,16 +100,15 @@ public class CourseService {
         return c;
     }
 
-    public void deleteParticipantFromCourse(String courseId, String studentId) {
+    public void deleteParticipantFromVideoContent(String courseId, String studentId) {
         Course course = courseRepository.findByCourseId(UUID.fromString(courseId));
         User user = userRepository.findByUserId(UUID.fromString(studentId));
         attachmentService.deleteAllForStudentInCourse(studentId, course);
-        meetingService.deleteAllForStudentInCourse(user, course);
         CourseToUser courseToUserToDelete = courseToUserRepository.findByCourseAndUser(course, user);
         courseToUserRepository.delete(courseToUserToDelete);
     }
 
-    public User getOwnerOfCourse(String courseId) {
+    public User getOwnerOfVideoContent(String courseId) {
         return courseRepository.findByCourseId(UUID.fromString(courseId)).getTeacher();
     }
 
@@ -121,13 +116,12 @@ public class CourseService {
         return sectionRepository.findBySectionId(UUID.fromString(sectionId)).getChildSections().size();
     }
 
-    public void deleteCourse(String courseId) {
+    public void deleteVideoContent(String courseId) {
         Course course = courseRepository.findByCourseId(UUID.fromString(courseId));
         List<Section> sections = sectionRepository.findByCourse(course);
         sections.stream().filter(section -> section.getParentSection() != null).forEach(section -> deleteSection(section.getSectionId().toString()));
         sections.stream().filter(section -> section.getParentSection() == null).forEach(section -> deleteSection(section.getSectionId().toString()));
         courseToUserRepository.deleteAll(courseToUserRepository.findByCourse(course));
-        meetingService.deleteAllForCourse(course);
         courseRepository.delete(course);
     }
 
@@ -144,5 +138,4 @@ public class CourseService {
 
         return updatedSection;
     }
-
 }

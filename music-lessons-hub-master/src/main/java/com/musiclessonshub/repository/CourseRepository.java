@@ -12,7 +12,7 @@ import java.util.UUID;
 public interface CourseRepository extends JpaRepository<Course, String> {
     Course findByCourseId(UUID courseId);
 
-    Course findByTitle(String title);
+    Course findByTitleAndIsFullCourse(String title, boolean isFullCourse);
 
-    List<Course> findAllByTeacher(User teacher);
+    List<Course> findAllByTeacherAndIsFullCourse(User teacher, boolean isFullCourse);
 }

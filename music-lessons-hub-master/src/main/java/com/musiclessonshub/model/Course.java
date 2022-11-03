@@ -1,12 +1,8 @@
 package com.musiclessonshub.model;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -18,7 +14,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Course {
     @Id
-    @Column(name="course_id")
+    @Column(name = "course_id")
     private UUID courseId;
 
     @Column
@@ -27,8 +23,10 @@ public class Course {
     private String avatar;
     @Column
     private String description;
+    @Column(name = "is_full_course")
+    private boolean isFullCourse;
     @ManyToOne
-    @JoinColumn(name="teacher_id")
+    @JoinColumn(name = "teacher_id")
     private User teacher;
 
 }

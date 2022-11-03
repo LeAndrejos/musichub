@@ -2,7 +2,7 @@
   <div style="display: flex; align-items: center">
     <h1 style="margin-right: 10px">{{section.section_name}}</h1>
     <app-confirmation-modal *ngIf="isOwner()" (delete)="this.delete()"></app-confirmation-modal>
-    <app-edit-section-modal [section]="this.section" (sectionEdit)="this.updateSection($event)"></app-edit-section-modal>
+    <app-edit-section-modal *ngIf="isOwner()" [section]="this.section" (sectionEdit)="this.updateSection($event)"></app-edit-section-modal>
   </div>
   <p>{{section.description}}</p>
 

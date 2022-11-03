@@ -42,6 +42,9 @@ import {ConfirmationModalComponent} from './_components/confirmation-modal/confi
 import {EditSectionModalComponent} from './_components/edit-section-modal/edit-section-modal.component';
 import {UserManagerComponent} from './_components/user-manager/user-manager.component';
 import {MatTableModule} from '@angular/material/table';
+import {VideoContentComponent} from './_components/video-content/video-content/video-content.component';
+import {VideoContentListComponent} from './_components/video-content/video-content-list/video-content-list.component';;
+import { VideoContentCreateEditComponent } from './_components/video-content/video-content-create-edit/video-content-create-edit.component'
 
 @NgModule({
   imports: [
@@ -89,7 +92,10 @@ import {MatTableModule} from '@angular/material/table';
     SendMeetingRecordingModalComponent,
     ConfirmationModalComponent,
     EditSectionModalComponent,
-    UserManagerComponent],
+    UserManagerComponent,
+    VideoContentListComponent,
+    VideoContentComponent,
+    VideoContentCreateEditComponent],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},

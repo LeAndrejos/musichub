@@ -9,4 +9,5 @@ public class CourseBean {
     private String title;
     private String avatar;
     private String description;
+    private boolean isFullCourse;
 }

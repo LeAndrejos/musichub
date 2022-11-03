@@ -69,4 +69,9 @@ public class MeetingService {
     public Meeting getMeeting(String meetingId) {
         return meetingRepository.findByMeetingId(UUID.fromString(meetingId));
     }
+
+    @Transactional
+    public void deleteAllForCourse(Course course) {
+        meetingRepository.deleteAllByCourseId(course);
+    }
 }

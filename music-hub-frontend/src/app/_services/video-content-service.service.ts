@@ -1,28 +1,27 @@
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
-import {Observable} from 'rxjs';
 import {AccountService} from '@app/_services/account.service';
 import {User} from '@app/_models';
 import {environment} from '@environments/environment';
-import {CourseInfo} from '@app/_models/course-info';
 import {Section} from '@app/_models/section';
 import {Attachment} from '@app/_models/attachment';
+import {CourseInfo} from '@app/_models/course-info';
+import {Observable} from 'rxjs';
 import {CreateFormHelper} from '@app/_helpers/createFormHelper';
 
 @Injectable({
   providedIn: 'root'
 })
-export class CourseService {
+export class VideoContentServiceService {
 
-  constructor(private http: HttpClient, private accountService: AccountService) {
-  }
+  constructor(private http: HttpClient, private accountService: AccountService) { }
 
   private user: User;
   private apiUrl = environment.apiUrl;
-  private getSubscriptionsUrl = '/course';
+  private getSubscriptionsUrl = '/video-content';
   private getAvatarUrl = '/file/';
-  private createCourseUrl = '/course';
-  private editCourseUrl = '/course';
+  private createCourseUrl = '/video-content';
+  private editCourseUrl = '/video-content';
   private getAttachmentsUrl = '/attachment/';
   private createAttachmentUrl = '/attachment/';
   private deleteAttachmentUrl = '/attachment/';
@@ -45,22 +44,22 @@ export class CourseService {
   }
 
   public joinNewCourse(courseId: string, userId: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/course/${courseId}/addStudent/${userId}`, {});
+    return this.http.post(`${this.apiUrl}/video-content/${courseId}/addStudent/${userId}`, {});
   }
 
   public getCourseByTitle(courseTitle: string): Observable<CourseInfo> {
-    return this.http.get<CourseInfo>(`${this.apiUrl}/course/title?courseTitle=${courseTitle}`);
+    return this.http.get<CourseInfo>(`${this.apiUrl}/video-content/title?courseTitle=${courseTitle}`);
   }
 
   public getSectionsForCourse(courseId: string): Observable<Section[]> {
 
-    return this.http.get<Section[]>(`${this.apiUrl}/course/${courseId}/section`);
+    return this.http.get<Section[]>(`${this.apiUrl}/video-content/${courseId}/section`);
   }
 
   public createSection(section: Section, courseId: string): Observable<any> {
     console.log(section);
     console.log(courseId);
-    return this.http.post(`${this.apiUrl}/course/${courseId}/section`, CreateFormHelper.createSectionForm(section));
+    return this.http.post(`${this.apiUrl}/video-content/${courseId}/section`, CreateFormHelper.createSectionForm(section));
   }
 
   public deleteAttachment(attachment: Attachment): Observable<any> {
@@ -92,35 +91,35 @@ export class CourseService {
   }
 
   public getUsersForCourse(courseId: string, withAdmin: boolean): Observable<User[]> {
-    return this.http.get<User[]>(`${this.apiUrl}/course/${courseId}/showParticipants?admin=${withAdmin}`);
+    return this.http.get<User[]>(`${this.apiUrl}/video-content/${courseId}/showParticipants?admin=${withAdmin}`);
   }
 
   public deleteUserFromCourse(courseId: string, userId: string): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/course/${courseId}/deleteStudent/${userId}`);
+    return this.http.delete(`${this.apiUrl}/video-content/${courseId}/deleteStudent/${userId}`);
   }
 
   public getCourse(courseId: string): Observable<CourseInfo> {
-    return this.http.get<CourseInfo>(`${this.apiUrl}/course/${courseId}`);
+    return this.http.get<CourseInfo>(`${this.apiUrl}/video-content/${courseId}`);
   }
 
   public getSubsectionNumber(courseId: string, sectionId: string): Observable<number> {
-    return this.http.get<number>(`${this.apiUrl}/course/${courseId}/section/${sectionId}/subsection/length`);
+    return this.http.get<number>(`${this.apiUrl}/video-content/${courseId}/section/${sectionId}/subsection/length`);
   }
 
   public getSubsections(courseId: string, sectionId: string): Observable<Section[]> {
-    return this.http.get<Section[]>(`${this.apiUrl}/course/${courseId}/section/${sectionId}/subsection`);
+    return this.http.get<Section[]>(`${this.apiUrl}/video-content/${courseId}/section/${sectionId}/subsection`);
   }
 
   public deleteSection(courseId: string, sectionId: string): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/course/${courseId}/section/${sectionId}`);
+    return this.http.delete(`${this.apiUrl}/video-content/${courseId}/section/${sectionId}`);
   }
 
   public deleteCourse(courseId: string): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/course/${courseId}`);
+    return this.http.delete(`${this.apiUrl}/video-content/${courseId}`);
   }
 
   public updateSection(section: Section, courseId: string): Observable<Section> {
-    return this.http.put<Section>(`${this.apiUrl}/course/${courseId}/section/${section.sectionId}`,
+    return this.http.put<Section>(`${this.apiUrl}/video-content/${courseId}/section/${section.sectionId}`,
       CreateFormHelper.createSectionForm(section));
   }
 }
