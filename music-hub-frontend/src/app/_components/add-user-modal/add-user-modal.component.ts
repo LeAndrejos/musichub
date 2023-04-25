@@ -16,6 +16,7 @@ export class AddUserModalComponent implements OnInit {
   closeResult: string;
   isSubmitted = false;
   isSelected = false;
+  @Input() isForTeachers = false;
   @Input() courseId: string;
   @Output() addUser: EventEmitter<any> = new EventEmitter();
 
@@ -57,9 +58,19 @@ export class AddUserModalComponent implements OnInit {
 
   getUsers() {
     this.accountService.getUsers().subscribe(allUsers => {
-      this.courseService.getUsersForCourse(this.courseId, false).subscribe(courseUsers => {
-        this.users = allUsers.filter(user => (!this.contains(courseUsers, user) && !(user.role === 'ADMIN') && !(user.role === 'TEACHER')));
-      });
+      if(this.isForTeachers) {
+        this.courseService.getTeachersForCourse(this.courseId, false).subscribe(courseUsers => {
+          const secondaryRole = this.isForTeachers ? 'STUDENT' : 'TEACHER';
+          this.users = allUsers.filter(user => (!this.contains(courseUsers, user) && !(user.role === 'ADMIN')
+            && !(user.role === secondaryRole)));
+        });
+      } else {
+        this.courseService.getUsersForCourse(this.courseId, false).subscribe(courseUsers => {
+          const secondaryRole = this.isForTeachers ? 'STUDENT' : 'TEACHER';
+          this.users = allUsers.filter(user => (!this.contains(courseUsers, user) && !(user.role === 'ADMIN')
+            && !(user.role === secondaryRole)));
+        });
+      }
     });
   }
 

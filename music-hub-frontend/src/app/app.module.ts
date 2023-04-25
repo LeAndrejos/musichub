@@ -43,8 +43,13 @@ import {EditSectionModalComponent} from './_components/edit-section-modal/edit-s
 import {UserManagerComponent} from './_components/user-manager/user-manager.component';
 import {MatTableModule} from '@angular/material/table';
 import {VideoContentComponent} from './_components/video-content/video-content/video-content.component';
-import {VideoContentListComponent} from './_components/video-content/video-content-list/video-content-list.component';;
-import { VideoContentCreateEditComponent } from './_components/video-content/video-content-create-edit/video-content-create-edit.component'
+import {VideoContentListComponent} from './_components/video-content/video-content-list/video-content-list.component';
+import { VideoContentCreateEditComponent } from './_components/video-content/video-content-create-edit/video-content-create-edit.component';
+import { ViewAttachmentComponent } from './_components/view-attachment/view-attachment.component';
+import { PdfViewerModule } from 'ng2-pdf-viewer';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import {MatSidenavModule} from '@angular/material/sidenav';
 
 @NgModule({
   imports: [
@@ -68,7 +73,11 @@ import { VideoContentCreateEditComponent } from './_components/video-content/vid
     MatToolbarModule,
     MDBBootstrapModule,
     MatTooltipModule,
-    MatTableModule
+    MatTableModule,
+    PdfViewerModule,
+    MatSnackBarModule,
+    MatProgressSpinnerModule,
+    MatSidenavModule
   ],
   declarations: [
     AppComponent,
@@ -95,7 +104,8 @@ import { VideoContentCreateEditComponent } from './_components/video-content/vid
     UserManagerComponent,
     VideoContentListComponent,
     VideoContentComponent,
-    VideoContentCreateEditComponent],
+    VideoContentCreateEditComponent,
+    ViewAttachmentComponent],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},

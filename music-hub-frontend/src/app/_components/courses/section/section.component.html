@@ -1,25 +1,41 @@
-<div class="section">
+<div [ngClass]="{'section': !isSubsection, 'subsection' : isSubsection }">
   <div style="display: flex; align-items: center">
-    <h1 style="margin-right: 10px">{{section.section_name}}</h1>
+    <h1 class="section-list-title">{{section.section_name}}</h1>
     <app-confirmation-modal *ngIf="isOwner()" (delete)="this.delete()"></app-confirmation-modal>
-    <app-edit-section-modal *ngIf="isOwner()" [section]="this.section" (sectionEdit)="this.updateSection($event)"></app-edit-section-modal>
+    <app-edit-section-modal *ngIf="isOwner()" [section]="this.section"
+                            (sectionEdit)="this.updateSection($event)"></app-edit-section-modal>
   </div>
-  <p>{{section.description}}</p>
+  <p class="section-description">{{section.description}}</p>
 
   <div style="overflow: hidden">
     <div>
-      <h1 style="margin: 20px;">Attachments</h1>
+      <h1 class="attachment-list-title">Attachments <span style="font-size: small">(max.&nbsp;500&nbsp;MB)</span></h1>
       <div style="width: 90%; float: left">
         <mat-list class="attachment">
-          <mat-list-item *ngFor="let attachment of this.attachments">
+          <mat-list-item *ngFor="let attachment of this.attachments" class="attachment-content">
             <div class="attachment-name">
-              <button color="button-download-color" mat-button
-                      (click)="getAttachment(attachment)">{{attachment.content}}</button>
+              {{attachment.content}}
             </div>
-            <div class="participant-delete" *ngIf="isOwner()">
-              <button mat-icon-button (click)="deleteAttachment(attachment)">
-                <mat-icon>delete</mat-icon>
-              </button>
+            <div *ngIf="attachment.isLoading" class="action-buttons">
+              <mat-progress-spinner [mode]="'determinate'" [value]="attachment.percentLoaded" diameter="25"></mat-progress-spinner>
+            </div>
+            <div *ngIf="!attachment.isLoading" class="action-buttons">
+              <div *ngIf="isOwner()">
+                <button mat-icon-button (click)="deleteAttachment(attachment)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+              <div *ngIf="isViewable(attachment)">
+                <button mat-icon-button (click)="viewAttachment(attachment)">
+                  <mat-icon>panorama</mat-icon>
+                </button>
+              </div>
+              <div>
+                <button *ngIf="!attachment.isDownloading" mat-icon-button (click)="getAttachment(attachment)">
+                  <mat-icon>arrow_downward</mat-icon>
+                </button>
+              </div>
+              <mat-progress-spinner *ngIf="attachment.isDownloading" [mode]="'determinate'" [value]="attachment.percentDownloaded" diameter="35"></mat-progress-spinner>
             </div>
           </mat-list-item>
           <mat-list-item *ngIf="this.attachments.length===0">
@@ -30,9 +46,9 @@
         </mat-list>
       </div>
 
-      <div style="width: 10%; float: right; text-align: center; vertical-align: middle; height: 100%" *ngIf="isOwner()">
         <input class="file-input" type="file" (change)="onFileSelected($event)" #avatarUpload>
-        <button mat-icon-button class="attachment-add" (click)="avatarUpload.click()">
+      <div style="width: 10%; float: right; text-align: center; vertical-align: middle; height: 100%" *ngIf="isOwner()">
+        <button style="width: 100%" mat-icon-button class="attachment-add" (click)="avatarUpload.click()">
           <mat-icon>add</mat-icon>
         </button>
       </div>
@@ -40,18 +56,34 @@
 
     <div>
       <div style="width: 90%; float: left">
-        <h1 style="margin: 20px;">{{this.isOwner() ? 'Participants\' attachments' : 'Your attachments'}}</h1>
+        <h1 class="attachment-list-title">{{this.isOwner() ? 'Participants\' attachments' : 'Your attachments'}} <span style="font-size: small">(max.&nbsp;500&nbsp;MB)</span></h1>
+
         <mat-list class="attachment">
-          <mat-list-item *ngFor="let attachment of this.userAttachments">
+          <mat-list-item *ngFor="let attachment of this.userAttachments" class="attachment-content">
             <div class="attachment-name">
-              <button color="button-download-color" mat-button
-                      (click)="getAttachment(attachment)">{{attachment.content}}</button>
+              {{attachment.content}}
               <span *ngIf="isOwner()"> --- {{attachment.user.username}}</span>
             </div>
-            <div class="participant-delete" *ngIf="isOwner() || isOwnerOfAttachment(attachment)">
-              <button mat-icon-button (click)="deleteAttachment(attachment)">
-                <mat-icon>delete</mat-icon>
-              </button>
+            <div *ngIf="attachment.isLoading" class="action-buttons">
+              <mat-progress-spinner [mode]="'determinate'" [value]="attachment.percentLoaded" diameter="25"></mat-progress-spinner>
+            </div>
+            <div *ngIf="!attachment.isLoading" class="action-buttons">
+              <div *ngIf="isOwner() || isOwnerOfAttachment(attachment)">
+                <button mat-icon-button (click)="deleteAttachment(attachment)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+              <div *ngIf="isViewable(attachment)">
+                <button mat-icon-button (click)="viewAttachment(attachment)">
+                  <mat-icon>panorama</mat-icon>
+                </button>
+              </div>
+              <div>
+                <button *ngIf="!attachment.isDownloading" mat-icon-button (click)="getAttachment(attachment)">
+                  <mat-icon>arrow_downward</mat-icon>
+                </button>
+              </div>
+              <mat-progress-spinner *ngIf="attachment.isDownloading" [mode]="'determinate'" [value]="attachment.percentDownloaded" diameter="35"></mat-progress-spinner>
             </div>
           </mat-list-item>
           <mat-list-item *ngIf="this.userAttachments.length===0">
@@ -65,7 +97,7 @@
       <div style="width: 10%; float: right; text-align: center; vertical-align: middle; height: 100%"
            *ngIf="!isOwner()">
         <input class="file-input" type="file" (change)="onFileSelected($event)" #avatarUpload>
-        <button mat-icon-button class="attachment-add" (click)="avatarUpload.click()">
+        <button style="width: 100%" mat-icon-button class="attachment-add" (click)="avatarUpload.click()">
           <mat-icon>add</mat-icon>
         </button>
       </div>
@@ -73,5 +105,5 @@
   </div>
 
   <app-subsection-list *ngIf="this.section.parentSection == null" [section]="this.section" [course]="this.course"
-                       [sections]="this.subsections"></app-subsection-list>
+                       [sections]="this.subsections" [isSecondaryTeacher]="isSecondaryTeacher"></app-subsection-list>
 </div>

@@ -8,23 +8,26 @@ import {Attachment} from '@app/_models/attachment';
 import {NewObjectsHelper} from '@app/_helpers/newObjectsHelper';
 import {AccountService} from '@app/_services';
 import {VideoService} from '@app/_services/video.service';
+import {HttpEventType} from '@angular/common/http';
+import {MeetingRecorder} from '@app/_helpers/meetingRecorder';
 
 @Component({
   selector: 'app-meeting',
   templateUrl: './meeting.component.html',
   styleUrls: ['./meeting.component.less']
 })
-export class MeetingComponent implements OnInit, AfterViewInit, OnDestroy {
+export class MeetingComponent implements OnInit, OnDestroy {
 
   @ViewChild('videoConference') remoteVideo;
   meeting: Meeting;
   meetingId: string;
   isCalling = false;
   hasCallEnded = false;
-  recordedBlobs: Blob[];
-  mediaRecorder: MediaRecorder;
+  // recordedBlobs: Blob[];
+  // mediaRecorder: MediaRecorder;
   isRecording = false;
   hasRecorded = false;
+  meetingRecorder: MeetingRecorder;
 
   constructor(private callService: CallService, private router: Router, private meetingService: MeetingService,
               private activatedRoute: ActivatedRoute, private courseService: CourseService,
@@ -39,10 +42,6 @@ export class MeetingComponent implements OnInit, AfterViewInit, OnDestroy {
       this.callService.setVideoElement(this.remoteVideo);
       this.callService.setMeetingId(this.meeting.meetingId);
     });
-  }
-
-  ngAfterViewInit() {
-
   }
 
   call() {
@@ -67,16 +66,18 @@ export class MeetingComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   startRecording() {
-    this.recordedBlobs = [];
-    const options: MediaRecorderOptions = {mimeType: 'video/webm'};
+    this.meetingRecorder = new MeetingRecorder(this.callService.remoteStream);
+    this.meetingRecorder.startRecording();
+    // this.recordedBlobs = [];
+    // const options: MediaRecorderOptions = {mimeType: 'video/webm'};
 
     try {
-      this.mediaRecorder = new MediaRecorder(this.callService.remoteStream, options);
-      this.mediaRecorder.start();
+      // this.mediaRecorder = new MediaRecorder(this.callService.remoteStream, options);
+      // this.mediaRecorder.start();
       this.isRecording = !this.isRecording;
       this.hasRecorded = true;
-      this.onDataAvailableEvent();
-      this.onStopRecordingEvent();
+      // this.onDataAvailableEvent();
+      // this.onStopRecordingEvent();
     } catch (err) {
       console.log(err);
     }
@@ -87,44 +88,53 @@ export class MeetingComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   stopRecording() {
-    this.mediaRecorder.stop();
+    // this.mediaRecorder.stop();
+    this.meetingRecorder.stopRecording();
     this.isRecording = !this.isRecording;
-    console.log('Recorded Blobs: ', this.recordedBlobs);
+    // console.log('Recorded Blobs: ', this.recordedBlobs);
   }
 
-  onDataAvailableEvent() {
-    try {
-      this.mediaRecorder.ondataavailable = (event: BlobEvent) => {
-        if (event.data && event.data.size > 0) {
-          this.recordedBlobs.push(event.data);
-        }
-      };
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  onStopRecordingEvent() {
-    try {
-      this.mediaRecorder.onstop = (event: Event) => {
-        const videoBuffer = new Blob(this.recordedBlobs, {type: 'video/webm'});
-      };
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  // onDataAvailableEvent() {
+  //   try {
+  //     this.mediaRecorder.ondataavailable = (event: BlobEvent) => {
+  //       if (event.data && event.data.size > 0) {
+  //         this.recordedBlobs.push(event.data);
+  //       }
+  //     };
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
+  //
+  // onStopRecordingEvent() {
+  //   try {
+  //     this.mediaRecorder.onstop = () => {
+  //       const videoBuffer = new Blob(this.recordedBlobs, {type: 'video/webm'});
+  //     };
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
 
   sendRecord(recordDescriptor) {
-    if (!this.recordedBlobs || !this.recordedBlobs.length) {
-      console.log('cannot send empty recording');
-      return;
-    }
-    const video = new Blob(this.recordedBlobs, {type: 'video/webm'});
-    console.log('video: ' + video);
-    const file = new File([video], recordDescriptor.name);
+    // if (!this.recordedBlobs || !this.recordedBlobs.length) {
+    //   console.log('cannot send empty recording');
+    //   return;
+    // }
+    // const video = new Blob(this.recordedBlobs, {type: 'video/webm'});
+    // console.log('video: ' + video);
+    // const file = new File([video], recordDescriptor.name);
+
+    const file = this.meetingRecorder.getVideoFile(recordDescriptor.name);
 
     this.courseService.addAttachment(this.createAttachmentFromDescriptor(recordDescriptor), recordDescriptor.section).subscribe(a => {
-      this.videoService.saveAttachment(file, a.attachmentId).subscribe(() => {
+      a.isLoading = true;
+      this.videoService.saveAttachment(file, a.attachmentId).subscribe(e => {
+        if (e.type === HttpEventType.UploadProgress) {
+          a.percentLoaded = e.loaded / file.size * 100;
+        } else if (e.type === HttpEventType.Response) {
+          a.isLoading = false;
+        }
       });
     });
 

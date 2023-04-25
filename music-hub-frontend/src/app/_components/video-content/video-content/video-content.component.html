@@ -6,15 +6,38 @@
     <button mat-icon-button *ngIf=isOwner() (click)="goToEditPage()">
       <mat-icon>edit</mat-icon>
     </button>
-    <app-confirmation-modal *ngIf=isOwner() (delete)="deleteCourse()"></app-confirmation-modal>
+    <app-confirmation-modal *ngIf="isOwner() && !this.isSecondaryTeacher()" (delete)="deleteCourse()"></app-confirmation-modal>
   </div>
 </div>
 
-<hr style="margin-left: 10%; margin-right: 10%"/>
+<hr class="course-section"/>
 
-<app-section-list [sections]="this.sections" [course]="this.course"></app-section-list>
+<div style="text-align:center">
+  <button mat-raised-button color="button-color" class="toggle-recording-button" (click)="toggleRecording()">
+    {{this.hideRecording ? 'Show recording panel' : 'Hide recording panel'}}
+  </button>
+</div>
+<div style="text-align:center; margin-top: 20px" [hidden]="hideRecording">
+  <video class="video" #video autoplay [muted]="'muted'"></video>
+  <span class="m-1"></span>
+  <br>
+  <button type="button" mat-raised-button color="button-color" class="course-button" *ngIf="!isRecording"
+          (click)="startRecording()">Start recording
+  </button>
+  <button class="btn btn-warning btn-lg" *ngIf="isRecording" (click)="stopRecording()">Stop recording</button>
+  <br/>
+  <br/>
+  <div class="btn-container">
+    <app-send-recording-modal *ngIf="!isRecording && this.hasRecorded" (sendRecording)="sendRecord($event)"
+                              [courseId]="this.course.courseId"></app-send-recording-modal>
+  </div>
+</div>
 
-<hr style="margin-left: 10%; margin-right: 10%"/>
+<hr class="course-section"/>
+
+<app-section-list [isSecondaryTeacher]="isSecondaryTeacher()" [sections]="this.sections" [course]="this.course"></app-section-list>
+
+<hr class="course-section"/>
 
 <h1 style="margin-left: 10%; font-size: 2.5em" *ngIf="isOwner()">Participants</h1>
 <div *ngIf="isOwner()" class="participants-list">
@@ -38,6 +61,31 @@
 
   <div class="btn-container">
     <app-add-user-modal (addUser)="this.addUserToCourse($event)" [courseId]="this.course.courseId"></app-add-user-modal>
+  </div>
+</div>
+
+<h1 style="font-size: 2.5em" class="course-section" *ngIf="isOwner() && !this.isSecondaryTeacher()">Teachers</h1>
+<div *ngIf="isOwner() && !this.isSecondaryTeacher()" class="participants-list">
+  <div style="width: 90%; float: left">
+    <mat-list class="participant">
+      <mat-list-item *ngFor="let participant of this.teachers">
+        <div class="participant-name">
+          {{participant.username}}
+        </div>
+        <div class="participant-delete">
+          <app-confirmation-modal (delete)="deleteUserFromCourse(participant)"></app-confirmation-modal>
+        </div>
+      </mat-list-item>
+      <mat-list-item *ngIf="this.teachers.length===0">
+        <div class="attachment-name">
+          <span style="color: grey">No extra teachers.</span>
+        </div>
+      </mat-list-item>
+    </mat-list>
+  </div>
+
+  <div class="btn-container">
+    <app-add-user-modal [isForTeachers]="true" (addUser)="this.addTeacherToCourse($event)" [courseId]="this.course.courseId"></app-add-user-modal>
   </div>
 </div>
 

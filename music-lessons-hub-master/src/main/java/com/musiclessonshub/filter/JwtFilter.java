@@ -38,6 +38,11 @@ public class JwtFilter extends AbstractAuthenticationProcessingFilter {
         final HttpServletRequest httpRequest = (HttpServletRequest) request;
         final HttpServletResponse httpResponse = (HttpServletResponse) response;
 
+        if(httpRequest.getContentLengthLong() > 500000000L) {
+            httpResponse.setStatus(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE);
+            return;
+        }
+
         final String authHeaderVal = httpRequest.getHeader(authHeader);
 
         if (authHeaderVal == null) {

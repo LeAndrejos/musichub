@@ -15,3 +15,20 @@
 .navbar-element {
   align-items: center;
 }
+
+.full-menu {
+  display: none;
+}
+
+.mobile-menu {
+  display: flex;
+}
+
+@media (min-width: 600px) {
+  .full-menu {
+    display: flex;
+  }
+  .mobile-menu {
+    display: none;
+  }
+}

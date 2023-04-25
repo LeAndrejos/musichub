@@ -1,17 +1,31 @@
 .mat-header-cell {
-  padding: 10px;
-  min-width: 100px;
+  padding: 3px;
+  min-width: 50px;
 }
 
 .mat-cell {
-  padding: 10px;
+  padding: 3px;
 }
 
 .admin-blocks {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+}
+
+@media (min-width: 600px) {
+  .admin-blocks {
+    display: flex;
+    flex-direction: row;
+  }
+}
+
+@media (min-width: 600px) {
+  .mat-header-cell {
+    padding: 3px;
+    min-width: 100px;
+  }
 }
 
 .admin-block {
-  margin-right: 20px;
+  margin-right: 100px;
 }

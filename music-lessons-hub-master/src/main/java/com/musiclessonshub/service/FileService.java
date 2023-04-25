@@ -49,5 +49,7 @@ public class FileService {
         client.deleteFile(id);
     }
 
-
+    public long getObjectSize(String id) throws Exception{
+        return client.getObjectStat(id);
+    }
 }

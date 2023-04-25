@@ -47,6 +47,10 @@ export class VideoContentServiceService {
     return this.http.post(`${this.apiUrl}/video-content/${courseId}/addStudent/${userId}`, {});
   }
 
+  public addTeacherToCourse(courseId: string, teacherId: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/video-content/${courseId}/addTeacher/${teacherId}`, {});
+  }
+
   public getCourseByTitle(courseTitle: string): Observable<CourseInfo> {
     return this.http.get<CourseInfo>(`${this.apiUrl}/video-content/title?courseTitle=${courseTitle}`);
   }
@@ -92,6 +96,10 @@ export class VideoContentServiceService {
 
   public getUsersForCourse(courseId: string, withAdmin: boolean): Observable<User[]> {
     return this.http.get<User[]>(`${this.apiUrl}/video-content/${courseId}/showParticipants?admin=${withAdmin}`);
+  }
+
+  public getTeachersForCourse(courseId: string, withAdmin: boolean): Observable<User[]> {
+    return this.http.get<User[]>(`${this.apiUrl}/video-content/${courseId}/showTeachers?admin=${withAdmin}`);
   }
 
   public deleteUserFromCourse(courseId: string, userId: string): Observable<any> {

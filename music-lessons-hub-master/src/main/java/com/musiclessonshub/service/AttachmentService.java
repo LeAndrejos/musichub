@@ -36,6 +36,10 @@ public class AttachmentService {
 
     }
 
+    public Attachment getAttachment(String attachmentId) {
+        return attachmentRepository.findByAttachmentId(UUID.fromString(attachmentId));
+    }
+
     public List<Attachment> getAttachmentsForSection(String sectionId) {
         return attachmentRepository.findBySectionId(sectionRepository.findBySectionId(UUID.fromString(sectionId)));
     }

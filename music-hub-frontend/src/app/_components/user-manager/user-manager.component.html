@@ -19,10 +19,25 @@
               <app-confirmation-modal (delete)="this.deleteUser(element.username)"></app-confirmation-modal>
             </td>
           </ng-container>
+          <ng-container matColumnDef="resetPassword">
+            <th mat-header-cell *matHeaderCellDef> Reset Password</th>
+            <td mat-cell *matCellDef="let element">
+              <button type="button" mat-raised-button color="button-color" class="course-button"
+                      (click)="this.resetPassword(element.username)">Reset password
+              </button>
+            </td>
+          </ng-container>
 
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
         </table>
+      </div>
+    </div>
+    <div class="admin-block">
+      <h1>Reset password</h1>
+      <div>
+        <h3>Username: {{this.lastResetUserUsername}}</h3>
+        <h3>Password: {{this.lastResetUserPassword}}</h3>
       </div>
     </div>
     <div class="admin-block">

@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, HostListener, OnInit, ViewChild} from '@angular/core';
 import {User} from '@app/_models';
 import {AccountService} from '@app/_services';
 import {Router} from '@angular/router';
@@ -12,19 +12,32 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 export class HeaderComponent implements OnInit {
   user: User = null;
   closeResult: string;
+  @ViewChild('sidenav') sideNav;
 
   constructor(private accountService: AccountService, private router: Router, private modalService: NgbModal) {
     this.accountService.user.subscribe(x => this.user = x);
   }
 
+  // @HostListener('document:click', ['$event'])
+  // documentClick(event: any): void {
+  //   setTimeout(() => {
+  //       if (event.currentTarget.activeElement !== this.sideNav?.nativeElement && this.sideNav.opened) {
+  //         this.sideNav.close();
+  //       }
+  //     },
+  //     100);
+  // }
+
   ngOnInit(): void {
   }
 
   logout() {
+    this.sideNav.close();
     this.accountService.logout();
   }
 
-  login(){
+  login() {
+    this.sideNav.close();
     this.router.navigate(['/account/login']);
   }
 
@@ -41,10 +54,12 @@ export class HeaderComponent implements OnInit {
   }
 
   goToAccount() {
+    this.sideNav.close();
     this.router.navigate(['/account/edit']);
   }
 
   goToUserManaging() {
+    this.sideNav.close();
     this.router.navigate(['/manage-users']);
   }
 

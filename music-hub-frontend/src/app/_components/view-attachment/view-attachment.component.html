@@ -1,0 +1,14 @@
+<div id="attachment-holder">
+  <div *ngIf="!isLoading">
+    <img *ngIf="attachment?.type=='jpg' || attachment?.type=='png'" id="attachment" [src]="imageSrc" alt="attachment"/>
+    <video id="videoAttachment" *ngIf="attachment?.type=='mp4'" [src]="imageSrc" style="width:100%" controls></video>
+    <pdf-viewer *ngIf="attachment?.type=='pdf'" [src]="pdfSrc" [render-text]="true" style="width: 100%"></pdf-viewer>
+  </div>
+  <audio *ngIf="(attachment?.type=='mp3' || attachment?.type=='wav') && !isLoading" [src]="imageSrc" style="width: 100%" controls></audio>
+  <mat-progress-spinner *ngIf="this.isLoading" [mode]="'determinate'" [value]="percentLoaded" diameter="200"></mat-progress-spinner>
+  <div>
+    <button type="button" mat-raised-button color="button-color" class="back-button" (click)="goBack()">
+      Back to course
+    </button>
+  </div>
+</div>

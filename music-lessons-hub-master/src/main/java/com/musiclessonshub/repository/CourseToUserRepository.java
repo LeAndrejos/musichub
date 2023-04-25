@@ -11,6 +11,8 @@ import java.util.UUID;
 @Repository
 public interface CourseToUserRepository  extends JpaRepository<CourseToUser, UUID> {
     List<CourseToUser> findByCourse(Course course);
+    List<CourseToUser> findByCourseAndIsParticipant(Course course, boolean isParticipant);
+    List<CourseToUser> findByUserAndIsParticipant(User user, boolean isParticipant);
     List<CourseToUser> findByUser(User user);
     CourseToUser findByCourseAndUser(Course course, User user);
 }

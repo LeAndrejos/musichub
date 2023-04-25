@@ -48,6 +48,10 @@ export class CourseService {
     return this.http.post(`${this.apiUrl}/course/${courseId}/addStudent/${userId}`, {});
   }
 
+  public addTeacherToCourse(courseId: string, teacherId: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/course/${courseId}/addTeacher/${teacherId}`, {});
+  }
+
   public getCourseByTitle(courseTitle: string): Observable<CourseInfo> {
     return this.http.get<CourseInfo>(`${this.apiUrl}/course/title?courseTitle=${courseTitle}`);
   }
@@ -93,6 +97,10 @@ export class CourseService {
 
   public getUsersForCourse(courseId: string, withAdmin: boolean): Observable<User[]> {
     return this.http.get<User[]>(`${this.apiUrl}/course/${courseId}/showParticipants?admin=${withAdmin}`);
+  }
+
+  public getTeachersForCourse(courseId: string, withAdmin: boolean): Observable<User[]> {
+    return this.http.get<User[]>(`${this.apiUrl}/course/${courseId}/showTeachers?admin=${withAdmin}`);
   }
 
   public deleteUserFromCourse(courseId: string, userId: string): Observable<any> {

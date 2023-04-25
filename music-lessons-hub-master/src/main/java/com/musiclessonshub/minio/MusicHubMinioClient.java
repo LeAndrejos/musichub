@@ -2,6 +2,7 @@ package com.musiclessonshub.minio;
 
 import com.musiclessonshub.propertie.MinioProperties;
 import io.minio.MinioClient;
+import io.minio.ObjectStat;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +43,9 @@ public class MusicHubMinioClient {
         );
     }
 
+    public long getObjectStat(String fileId) throws Exception{
+        return minioClient.statObject(minioProperties.getLessonsBucket(), fileId).length();
+    }
 
     public InputStream getFileContent(String fileId) throws Exception {
         return minioClient.getObject(minioProperties.getLessonsBucket(), fileId);

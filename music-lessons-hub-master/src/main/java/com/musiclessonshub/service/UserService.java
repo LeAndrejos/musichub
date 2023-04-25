@@ -86,4 +86,12 @@ public class UserService {
             throw new UsernameTakenException();
         }
     }
+
+    public String resetPassword(User user) {
+        String password = RandomString.make();
+        String encryptedPassword = BCrypt.hashpw(password, salt.getSalt());
+        user.setPassword(encryptedPassword);
+        userRepository.save(user);
+        return password;
+    }
 }

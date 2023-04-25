@@ -43,8 +43,18 @@ public class CourseService {
         return courseToUserRepository.findByUser(user).stream().filter(c -> c.getCourse().isFullCourse()).map(CourseToUser::getCourse).collect(Collectors.toList());
     }
 
+    public List<Course> getAllCourses() {
+        return courseRepository.findAll();
+    }
+
     public List<Course> getCoursesForTeacher(User user) {
-        return courseRepository.findAllByTeacherAndIsFullCourse(user, true);
+        List<Course> courses = courseRepository.findAllByTeacherAndIsFullCourse(user, true);
+        for (CourseToUser courseToUser : courseToUserRepository.findByUserAndIsParticipant(user, false)) {
+            if (courseToUser.getCourse().isFullCourse()) {
+                courses.add(courseToUser.getCourse());
+            }
+        }
+        return courses;
     }
 
     public Course getCourseById(String id) {
@@ -52,7 +62,18 @@ public class CourseService {
     }
 
     public CourseToUser addParticipantToCourse(String courseId, String studentId) {
-        CourseToUser courseToUser = new CourseToUser(UUID.randomUUID(), userRepository.findByUserId(UUID.fromString(studentId)), courseRepository.findByCourseId(UUID.fromString(courseId)));
+        CourseToUser courseToUser = new CourseToUser(UUID.randomUUID(), userRepository.findByUserId(UUID.fromString(studentId)), courseRepository.findByCourseId(UUID.fromString(courseId)), true);
+        courseToUserRepository.save(courseToUser);
+        try {
+            CourseToUser courseToUser1 = courseToUserRepository.save(courseToUser);
+            return courseToUser1;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public CourseToUser addTeacherToCourse(String courseId, String teacherId) {
+        CourseToUser courseToUser = new CourseToUser(UUID.randomUUID(), userRepository.findByUserId(UUID.fromString(teacherId)), courseRepository.findByCourseId(UUID.fromString(courseId)), false);
         courseToUserRepository.save(courseToUser);
         try {
             CourseToUser courseToUser1 = courseToUserRepository.save(courseToUser);
@@ -64,7 +85,17 @@ public class CourseService {
 
     public List<User> getParticipantsOfCourse(String courseId) {
         Course course = courseRepository.findByCourseId(UUID.fromString(courseId));
-        List<CourseToUser> list = courseToUserRepository.findByCourse(course);
+        List<CourseToUser> list = courseToUserRepository.findByCourseAndIsParticipant(course, true);
+        List<User> listOfUser = new ArrayList<>();
+        for (CourseToUser courseToUser : list) {
+            listOfUser.add(courseToUser.getUser());
+        }
+        return listOfUser;
+    }
+
+    public List<User> getTeachersOfCourse(String courseId) {
+        Course course = courseRepository.findByCourseId(UUID.fromString(courseId));
+        List<CourseToUser> list = courseToUserRepository.findByCourseAndIsParticipant(course, false);
         List<User> listOfUser = new ArrayList<>();
         for (CourseToUser courseToUser : list) {
             listOfUser.add(courseToUser.getUser());

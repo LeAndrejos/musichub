@@ -1,4 +1,4 @@
-<div style="display: flex; margin-left: 10%">
+<div class="section-list">
   <div>
     <h1 style="font-size: 2.5em">Sections</h1>
   </div>
@@ -11,7 +11,7 @@
 </div>
 
 <div class="sections">
-  <app-section *ngFor="let section of this.sections" (sectionDelete)="this.deleteSection($event)" [course]="course"
+  <app-section *ngFor="let section of this.sections" [isSecondaryTeacher]="this.isSecondaryTeacher" (sectionDelete)="this.deleteSection($event)" [course]="course"
                [section]="section"></app-section>
 </div>
 

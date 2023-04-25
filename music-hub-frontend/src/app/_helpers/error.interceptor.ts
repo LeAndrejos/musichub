@@ -5,10 +5,11 @@ import {catchError} from 'rxjs/operators';
 
 import {AccountService} from '@app/_services';
 import {Router} from '@angular/router';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
-  constructor(private accountService: AccountService, private router: Router) {
+  constructor(private accountService: AccountService, private router: Router, private snackBar: MatSnackBar) {
   }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -19,11 +20,10 @@ export class ErrorInterceptor implements HttpInterceptor {
       }
 
       if ([400, 404].includes(err.status) && this.accountService.userValue) {
-        this.router.navigate(['/courses']);
+        this.snackBar.open('Error: Not found.', 'Close');
       }
 
       const error = err.error?.message || err.statusText;
-      console.error(err);
       return throwError(error);
     }));
   }

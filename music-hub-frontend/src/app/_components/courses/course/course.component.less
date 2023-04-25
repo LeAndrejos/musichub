@@ -6,8 +6,8 @@
 .meeting {
   display: flex;
   border-style: solid;
-  margin: 20px 10%;
-  padding: 20px;
+  margin: 10px 5%;
+  padding: 10px;
   border-width: 2px;
   border-color: dimgray;
   border-radius: 25px;
@@ -15,13 +15,28 @@
   justify-content: space-between;
 }
 
+@media (min-width: 600px) {
+  .meeting {
+    display: flex;
+    border-style: solid;
+    margin: 20px 10%;
+    padding: 20px;
+    border-width: 2px;
+    border-color: dimgray;
+    border-radius: 25px;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
 .meeting-details {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .meeting-label-element {
-  margin-left: 10px;
+  margin-left: 5px;
 }
 
 .btn-container {
@@ -38,12 +53,24 @@
 
 .participants-list {
   border-style: solid;
-  margin: 20px 10% 10%;
-  padding: 20px;
+  margin: 20px 5% 20px%;
+  padding: 10px;
   border-width: 2px;
   border-color: dimgray;
   overflow: hidden;
   border-radius: 25px;
+}
+
+@media (min-width: 600px) {
+  .participants-list {
+    border-style: solid;
+    margin: 20px 10% 20px;
+    padding: 20px;
+    border-width: 2px;
+    border-color: dimgray;
+    overflow: hidden;
+    border-radius: 25px;
+  }
 }
 
 .participant {
@@ -65,5 +92,35 @@
 }
 
 .meeting-button {
-  margin-right: 15px;
+  margin-right: 5px;
 }
+
+.course-section {
+  margin-left: 5%;
+  margin-right: 5%;
+}
+
+@media (min-width: 600px) {
+  .course-section {
+    margin-left: 10%;
+    margin-right: 10%;
+  }
+}
+
+.icon-data-group {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 10px;
+}
+
+@media (min-width: 600px) {
+  .icon-data-group {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 0;
+  }
+}
+
+

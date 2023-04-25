@@ -17,15 +17,6 @@
         <label for="description">Short Description </label>
         <input class="form-control" id="description" name="description" type="text" [(ngModel)]="description" placeholder="Add description.">
       </div>
-      <div class="form-control input-card">
-        <input class="file-input" type="file" id="avatar" (change)="onFileSelected($event)" #avatarUpload>
-        <div class="file-upload">
-          {{ this.fileName || "No avatar selected." }}
-          <button mat-mini-fab color="button-color" class="upload-btn" (click)="avatarUpload.click()">
-            <mat-icon>attach_file</mat-icon>
-          </button>
-        </div>
-      </div>
       <div class="btn-container">
         <button [disabled]="t.invalid" type="submit" mat-raised-button color="button-color" class="course-button" (click)="this.save()">Save</button>
       </div>

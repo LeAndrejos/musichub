@@ -11,7 +11,9 @@ export class UserManagerComponent implements OnInit {
 
   users: User[] = [];
   newTeacher: User;
-  readonly displayedColumns: string[] = ['username', 'roleButton', 'deleteButton'];
+  lastResetUserUsername: string;
+  lastResetUserPassword: string;
+  readonly displayedColumns: string[] = ['username', 'roleButton', 'deleteButton', 'resetPassword'];
 
   constructor(private accountService: AccountService) {
   }
@@ -23,6 +25,13 @@ export class UserManagerComponent implements OnInit {
   deleteUser(username: string): void {
     this.accountService.deleteUser(username).subscribe(() => {
       this.loadUsers();
+    });
+  }
+
+  resetPassword(username: string): void {
+    this.accountService.resetPassword(username).subscribe(response => {
+      this.lastResetUserPassword = response.password;
+      this.lastResetUserUsername = username;
     });
   }
 

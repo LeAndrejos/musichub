@@ -12,9 +12,11 @@ import com.musiclessonshub.service.FileService;
 import com.musiclessonshub.service.UserService;
 import io.minio.errors.ErrorResponseException;
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.http.fileupload.impl.SizeLimitExceededException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -51,6 +53,10 @@ public class FileController {
         }
     }
 
+    @GetMapping("/{object}/size")
+    public ResponseEntity<?> getFileSize(@PathVariable("object") String object) throws Exception{
+        return ResponseEntity.status(HttpStatus.OK).body(fileService.getObjectSize(object));
+    }
 
     @PostMapping("/{attachmentId}")
     public ResponseEntity<?> saveFile(@RequestHeader("Authorization") String token, @RequestBody MultipartFile file, @PathVariable("attachmentId") String attachmentId) {

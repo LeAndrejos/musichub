@@ -32,7 +32,12 @@ export class NewObjectsHelper {
       type: '',
       content: '',
       course: null,
-      user: null
+      sectionId: null,
+      user: null,
+      isLoading: false,
+      percentLoaded: 0,
+      isDownloading: false,
+      percentDownloaded: 0
     };
   }
 

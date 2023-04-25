@@ -5,26 +5,29 @@
         <img src="assets/logo2.png" width="100%" alt="logo">
       </div>
     </div>
-    <div>
+    <div class="full-menu">
       <a class="nav-item nav-link" style="font-size: 20px" routerLink="/" routerLinkActive="active"
          [routerLinkActiveOptions]="{exact: true}">Home</a>
     </div>
-    <div *ngIf="user">
+    <div *ngIf="user" class="full-menu">
       <a class="nav-item nav-link" style="font-size: 20px" routerLink="courses" routerLinkActive="active"
          [routerLinkActiveOptions]="{exact: true}">Courses</a>
     </div>
-    <div *ngIf="user">
+    <div *ngIf="user" class="full-menu">
       <a class="nav-item nav-link" style="font-size: 20px" routerLink="video-content" routerLinkActive="active"
          [routerLinkActiveOptions]="{exact: true}">Video Content</a>
     </div>
-    <div *ngIf="user">
+    <div *ngIf="user" class="full-menu">
       <a class="nav-item nav-link" style="font-size: 20px" (click)="logout()">Logout</a>
     </div>
-    <div *ngIf="!user">
+    <div *ngIf="!user" class="full-menu">
       <a class="nav-item nav-link" style="font-size: 20px" (click)="login()">Login</a>
     </div>
+    <div class="full-menu">
+      <a class="nav-item nav-link" style="font-size: 20px" href="assets/music-hub-app.apk">Download app</a>
+    </div>
   </div>
-  <div class="account-btn-container" *ngIf="user">
+  <div class="account-btn-container full-menu" *ngIf="user">
     <div>
       <span style="color: white; font-size: 20px">{{this.user.username}}</span>
     </div>
@@ -37,6 +40,55 @@
       </button>
     </div>
   </div>
+  <div class="mobile-menu">
+    <button type="button" mat-icon-button color="button-color" (click)="sidenav.toggle()">
+      <mat-icon>menu</mat-icon>
+    </button>
+  </div>
 </nav>
+
+<mat-sidenav #sidenav style="width: 45%; background-color: #ebebe0; position: absolute; height: 100%; padding-top: 30px" mode="side">
+  <div *ngIf="user">
+    <a class="nav-item nav-link" style="font-size: 20px" routerLink="/" routerLinkActive="active"
+       (click)="sidenav.close()"
+       [routerLinkActiveOptions]="{exact: true}">Home</a>
+  </div>
+  <div *ngIf="user">
+    <a class="nav-item nav-link" style="font-size: 20px" routerLink="courses" routerLinkActive="active"
+       (click)="sidenav.close()"
+       [routerLinkActiveOptions]="{exact: true}">Courses</a>
+  </div>
+  <div *ngIf="user">
+    <a class="nav-item nav-link" style="font-size: 20px" routerLink="video-content" routerLinkActive="active"
+       (click)="sidenav.close()"
+       [routerLinkActiveOptions]="{exact: true}">Video Content</a>
+  </div>
+
+  <hr/>
+
+  <div *ngIf="user">
+    <a class="nav-item nav-link" style="font-size: 20px" (click)="goToAccount()">
+      {{this.user.username}}
+    </a>
+  </div>
+  <div *ngIf="user?.role === 'ADMIN'">
+    <a class="nav-item nav-link" style="font-size: 20px" (click)="goToUserManaging()">
+      Admin tools
+    </a>
+  </div>
+  <hr/>
+  <div *ngIf="user">
+    <a class="nav-item nav-link" style="font-size: 20px" (click)="logout()">Logout</a>
+  </div>
+  <div *ngIf="!user">
+    <a class="nav-item nav-link" style="font-size: 20px" (click)="login()">Login</a>
+  </div>
+
+  <hr/>
+
+  <div>
+    <a class="nav-item nav-link" style="font-size: 20px" href="assets/music-hub-app.apk">Download app</a>
+  </div>
+</mat-sidenav>
 
 

@@ -15,4 +15,6 @@ public interface CourseRepository extends JpaRepository<Course, String> {
     Course findByTitleAndIsFullCourse(String title, boolean isFullCourse);
 
     List<Course> findAllByTeacherAndIsFullCourse(User teacher, boolean isFullCourse);
+
+
 }

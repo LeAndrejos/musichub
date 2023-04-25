@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -65,6 +66,17 @@ public class UserController {
             User user = userService.findByUsername(username);
             userService.deleteUser(user);
         }
+    }
+
+    @PostMapping(value = "/user/{username}/resetPassword")
+    public ResponseEntity<?> resetPassword(@RequestHeader("Authorization") String token, @PathVariable("username") String username) {
+        String role = RoleConfig.getRoleFromToken(token);
+        if (role.equals("ADMIN")) {
+            User user = userService.findByUsername(username);
+            String newPassword = userService.resetPassword(user);
+            return ResponseEntity.status(HttpStatus.CREATED).body(Collections.singletonMap("password", newPassword));
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     @PostMapping(value = "/user/createTeacher")

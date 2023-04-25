@@ -28,6 +28,16 @@ public class AttachmentController {
 
     }
 
+    @GetMapping(value = "/attachment/{attachmentId}")
+    public ResponseEntity<?> getAttachment(@PathVariable(name="attachmentId") String attachmentId) {
+        Attachment attachment = attachmentService.getAttachment(attachmentId);
+        if (attachment != null) {
+            return ResponseEntity.status(HttpStatus.OK).body(attachment);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+
+    }
+
     @GetMapping(value = "/{sectionId}")
     public ResponseEntity<?> getAttachments(@PathVariable(name="sectionId") String sectionId){
         List<Attachment> attachments =  attachmentService.getAttachmentsForSection(sectionId);

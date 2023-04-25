@@ -7,6 +7,15 @@ export class AttachmentTypeHelper {
         return 'application/pdf';
       case 'mp4':
         return 'video/mp4';
+      case 'mp3':
+        return 'audio/mpeg';
+      case 'wav':
+        return 'audio/wav';
+      case 'jpeg':
+      case 'jpg':
+        return 'image/jpeg';
+      default:
+        return 'unsupported';
     }
   }
 }

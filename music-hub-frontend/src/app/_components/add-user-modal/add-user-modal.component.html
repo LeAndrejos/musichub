@@ -1,6 +1,6 @@
 <ng-template #content let-modal>
   <div class="modal-header">
-    <h1 class="modal-title" id="modal-basic-title">Add a user to the course</h1>
+    <h1 class="modal-title" id="modal-basic-title">Add a {{this.isForTeachers ? 'secondary teacher' : 'user'}} to the course</h1>
     <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
       <span aria-hidden="true">&times;</span>
     </button>
@@ -13,12 +13,12 @@
             {{user.username}}
           </mat-list-option>
           <mat-list-item *ngIf="this.users.length===0">
-            <span style="color: grey">No users available.</span>
+            <span style="color: grey">No Add a {{this.isForTeachers ? 'teachers' : 'users'}} available.</span>
           </mat-list-item>
         </mat-selection-list>
         <div *ngIf="this.isSubmitted && !this.isSelected" class="invalid-list-error">
           <div>
-            You must choose a user.
+            You must choose a {{this.isForTeachers ? 'teacher' : 'user'}}.
           </div>
         </div>
       </div>

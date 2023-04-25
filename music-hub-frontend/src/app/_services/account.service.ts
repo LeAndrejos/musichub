@@ -73,6 +73,10 @@ export class AccountService {
     return this.http.delete(`${environment.apiUrl}/user/${username}`);
   }
 
+  resetPassword(username: string): Observable<any> {
+    return this.http.post<any>(`${environment.apiUrl}/user/${username}/resetPassword`, {});
+  }
+
   createNewTeacher(): Observable<User> {
     return this.http.post<User>(`${environment.apiUrl}/user/createTeacher`, {});
   }

@@ -1,11 +1,10 @@
 import {Injectable} from '@angular/core';
 import {User} from '@app/_models';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpEvent} from '@angular/common/http';
 import {AccountService} from '@app/_services/account.service';
 import {Observable} from 'rxjs';
 import {environment} from '@environments/environment';
 import {Attachment} from '@app/_models/attachment';
-import {AttachmentTypeHelper} from '@app/_helpers/attachmentTypeHelper';
 
 @Injectable({
   providedIn: 'root'
@@ -30,14 +29,27 @@ export class VideoService {
     return this.http.post<string>(`${this.apiUrl}${this.saveFileUrl}`, formData);
   }
 
-  public getFile(attachment: Attachment): Observable<any> {
-    return this.http.get(`${this.apiUrl}${this.getFileUrl}${attachment.attachmentId}`, {responseType: 'blob'});
+  public getFile(attachment: Attachment): Observable<HttpEvent<any>> {
+    return this.getFileWithId(attachment.attachmentId);
   }
 
-  public saveAttachment(file: File, attachmentId: string){
+  public getFileWithId(attachmentId: string): Observable<HttpEvent<any>> {
+    return this.http.get(`${this.apiUrl}${this.getFileUrl}${attachmentId}`,
+      {reportProgress: true, observe: 'events', responseType: 'blob'});
+  }
+
+  public getFileSize(attachmentId: string): Observable<number> {
+    return this.http.get<number>(`${this.apiUrl}${this.getFileUrl}${attachmentId}/size`);
+  }
+
+  public saveAttachment(file: File, attachmentId: string): Observable<HttpEvent<any>> {
     const formData = new FormData();
     formData.append('file', file);
     console.log(file.name);
-    return this.http.post(`${this.apiUrl}${this.saveAttachmentUrl}${attachmentId}`, formData);
+    return this.http.post(`${this.apiUrl}${this.saveAttachmentUrl}${attachmentId}`, formData, {reportProgress: true, observe: 'events'});
+  }
+
+  public getAttachment(attachmentId: string): Observable<Attachment> {
+    return this.http.get<Attachment>(`${this.apiUrl}/attachment/attachment/${attachmentId}`);
   }
 }

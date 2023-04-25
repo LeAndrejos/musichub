@@ -1,20 +1,82 @@
 .section {
   border-style: solid;
-  margin: 20px 10%;
+  margin: 20px 5%;
   padding: 20px;
   border-width: 2px;
   border-color: dimgray;
   border-radius: 25px;
 }
 
+.subsection {
+  border-style: solid;
+  margin: 20px 0;
+  padding: 20px;
+  border-width: 2px;
+  border-color: dimgray;
+  border-radius: 25px;
+}
+
+@media (min-width: 600px) {
+  .section {
+    border-style: solid;
+    margin: 20px 10%;
+    padding: 20px;
+    border-width: 2px;
+    border-color: dimgray;
+    border-radius: 25px;
+  }
+}
+
+.attachment-list-title {
+  margin: 5px;
+}
+
+@media (min-width: 600px) {
+  .attachment-list-title {
+    margin: 20px;
+  }
+}
+
+.section-description {
+  overflow-wrap: break-word;
+  overflow: auto;
+}
+
+.section-list-title {
+  margin-right: 10px;
+  overflow-wrap: break-word;
+  overflow: auto;
+}
+
 .attachment-name {
-  width: 90%;
+  width: 85%;
   float: left;
+  overflow-wrap: break-word;
+  overflow: auto;
+  margin: 5px 0;
 }
 
 .attachment-delete {
   width: 10%;
   float: left;
+}
+
+.action-buttons {
+  float: right;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  width: 15%;
+}
+
+@media (min-width: 600px) {
+  .action-buttons {
+    float: right;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    width: 15%;
+  }
 }
 
 .attachments {
@@ -42,6 +104,30 @@
   margin-top: 20px;
   display: flex;
   justify-content: center;
+}
+
+.mat-list-item {
+  height: auto !important;
+}
+
+@media (min-width: 600px) {
+  .mat-list-item {
+    height: auto !important;
+  }
+}
+
+.mat-list-item.attachment-content {
+  border-bottom: solid #dadbdb !important;
+}
+
+.mat-list-item.attachment-content:last-child {
+  border-bottom: none !important;
+}
+
+@media (min-width: 600px) {
+  .mat-list-item.attachment-content {
+    border-bottom: none !important;
+  }
 }
 
 

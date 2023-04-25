@@ -13,6 +13,7 @@ export class SectionListComponent implements OnInit {
 
   @Input() sections: Section[] = [];
   @Input() course: CourseInfo;
+  @Input() isSecondaryTeacher = false;
   @Output() sectionCreate: EventEmitter<Section> = new EventEmitter<Section>();
 
   constructor(private courseService: CourseService, private accountService: AccountService) {
@@ -29,7 +30,7 @@ export class SectionListComponent implements OnInit {
   }
 
   isOwner(): boolean {
-    return this.course?.teacher?.userId === this.accountService.userValue.userId;
+    return this.course?.teacher?.userId === this.accountService.userValue.userId || this.accountService.userValue.role === 'ADMIN' || this.isSecondaryTeacher;
   }
 
   deleteSection(sectionId: string) {

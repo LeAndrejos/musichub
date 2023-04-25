@@ -83,10 +83,33 @@ public class VideoContentController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
+    @GetMapping(value = "/{courseId}/showTeachers")
+    public ResponseEntity<?> getTeachersOfCourse(@RequestHeader("Authorization") String token, @PathVariable(name = "courseId") String courseId, @RequestParam(required = false) String admin) {
+        List<User> users = videoContentService.getTeachersOfVideoContent(courseId);
+        if (admin.equals("true")) {
+            users.add(videoContentService.getOwnerOfVideoContent(courseId));
+        }
+        String username = RoleConfig.getUsernameFromToken(token);
+        //users.removeIf(user -> user.getUsername().equals(username));
+        if (users != null) {
+            return ResponseEntity.status(HttpStatus.OK).body(users);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
+
     //sprawdzenie czy ma dostęp
     @PostMapping(value = "/{courseId}/addStudent/{studentId}")
     public ResponseEntity<?> addParticipant(@PathVariable(name = "courseId") String courseId, @PathVariable(name = "studentId") String studentId) {
         CourseToUser courseToUser = videoContentService.addParticipantToVideoContent(courseId, studentId);
+        if (courseToUser != null) {
+            return ResponseEntity.status(HttpStatus.OK).body(courseToUser);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
+
+    @PostMapping(value = "/{courseId}/addTeacher/{teacherId}")
+    public ResponseEntity<?> addTeacher(@PathVariable(name = "courseId") String courseId, @PathVariable(name = "teacherId") String teacherId) {
+        CourseToUser courseToUser = videoContentService.addTeacherToVideoContent(courseId, teacherId);
         if (courseToUser != null) {
             return ResponseEntity.status(HttpStatus.OK).body(courseToUser);
         }

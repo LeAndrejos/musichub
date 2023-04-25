@@ -12,6 +12,7 @@ import {UserManagerComponent} from '@app/_components/user-manager/user-manager.c
 import {VideoContentListComponent} from '@app/_components/video-content/video-content-list/video-content-list.component';
 import {VideoContentCreateEditComponent} from '@app/_components/video-content/video-content-create-edit/video-content-create-edit.component';
 import {VideoContentComponent} from '@app/_components/video-content/video-content/video-content.component';
+import {ViewAttachmentComponent} from '@app/_components/view-attachment/view-attachment.component';
 
 const accountModule = () => import('./account/account.module').then(x => x.AccountModule);
 
@@ -28,6 +29,7 @@ const routes: Routes = [
   {path: 'video-content', component: VideoContentListComponent, canActivate: [AuthGuard]},
   {path: 'video-content/create', component: VideoContentCreateEditComponent, canActivate: [AuthGuard]},
   {path: 'video-content/:id', component: VideoContentComponent, canActivate: [AuthGuard]},
+  {path: 'view-attachment/:id', component: ViewAttachmentComponent, canActivate: [AuthGuard]},
 
   {path: '**', redirectTo: ''}
 ];
